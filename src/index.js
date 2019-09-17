@@ -5,6 +5,7 @@ import dude from "./assets/dude.png";
 // global variables
 const width = window.innerWidth
 const height = window.innerHeight
+const speed = 160;
 let playerLeft;
 let playerRight;
 let cursors;
@@ -109,12 +110,12 @@ function createRight() {
 function updateLeft() {
   if (changeable) {
     if (cursors.left.isDown) {
-      playerLeft.setVelocityX(-160);
+      playerLeft.setVelocityX(-speed);
 
       playerLeft.anims.play('left', true);
     }
     else if (cursors.right.isDown) {
-      playerLeft.setVelocityX(160);
+      playerLeft.setVelocityX(speed);
 
       playerLeft.anims.play('right', true);
     } else {
@@ -128,19 +129,19 @@ function updateLeft() {
 function updateRight() {
   playerRight.setVelocity(0)
   if (cursors.left.isDown) {
-    playerRight.setVelocityX(160);
+    playerRight.setVelocityX(speed);
 
     playerRight.anims.play('left', true);
     changeable = true
   }
   else if (cursors.right.isDown) {
-    playerRight.setVelocityX(-160);
+    playerRight.setVelocityX(-speed);
 
     playerRight.anims.play('right', true);
   } else if (cursors.up.isDown) {
-    playerRight.setVelocityY(-160);
+    playerRight.setVelocityY(-speed);
   } else if (cursors.down.isDown) {
-    playerRight.setVelocityY(160);
+    playerRight.setVelocityY(speed);
   }
   else {
     playerRight.setVelocityX(0);
