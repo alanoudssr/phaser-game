@@ -1,7 +1,16 @@
 import Phaser from "phaser";
 import dude from "./assets/dude.png";
+
+
+// global variables
 const width = window.innerWidth
 const height = window.innerHeight
+let playerLeft;
+let playerRight;
+let cursors;
+let changeable = false;
+
+// setting up config
 const configLeft = {
   type: Phaser.AUTO,
   parent: "phaser-example",
@@ -20,6 +29,7 @@ const configLeft = {
     update: updateLeft
   }
 };
+
 const configRight = { ...configLeft }
 configRight.scene = {
   preload: preloadRight,
@@ -27,19 +37,23 @@ configRight.scene = {
   update: updateRight
 }
 
+
+// game instances
 const left = new Phaser.Game(configLeft);
 const right = new Phaser.Game(configRight);
 
-let playerLeft;
-let playerRight;
-let cursors;
-let changeable = false;
 
+// preload functions
 function preloadLeft() {
   this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
-
 }
 
+function preloadRight() {
+  this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
+}
+
+
+// create functions
 function createLeft() {
   playerLeft = this.physics.add.sprite(300, 450, 'dude');
   playerLeft.setBounce(0.2);
@@ -64,35 +78,8 @@ function createLeft() {
     repeat: -1
   });
   cursors = this.input.keyboard.createCursorKeys();
-  console.log("physics object", this.physics);
-
-  // console.log("player object", player);
 }
 
-function updateLeft() {
-  if (changeable) {
-    if (cursors.left.isDown) {
-      playerLeft.setVelocityX(-160);
-
-      playerLeft.anims.play('left', true);
-    }
-    else if (cursors.right.isDown) {
-      playerLeft.setVelocityX(160);
-
-      playerLeft.anims.play('right', true);
-    } else {
-      playerLeft.setVelocityX(0);
-
-      playerLeft.anims.play('turn');
-    }
-  }
-}
-
-
-function preloadRight() {
-  this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
-
-}
 function createRight() {
   playerRight = this.physics.add.sprite(300, 450, 'dude');
   playerRight.setCollideWorldBounds(true);
@@ -116,6 +103,28 @@ function createRight() {
     repeat: -1
   });
 }
+
+
+// update functions 
+function updateLeft() {
+  if (changeable) {
+    if (cursors.left.isDown) {
+      playerLeft.setVelocityX(-160);
+
+      playerLeft.anims.play('left', true);
+    }
+    else if (cursors.right.isDown) {
+      playerLeft.setVelocityX(160);
+
+      playerLeft.anims.play('right', true);
+    } else {
+      playerLeft.setVelocityX(0);
+
+      playerLeft.anims.play('turn');
+    }
+  }
+}
+
 function updateRight() {
   playerRight.setVelocity(0)
   if (cursors.left.isDown) {
