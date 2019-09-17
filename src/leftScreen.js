@@ -6,9 +6,10 @@ const { dude, plant } = assets
 // global variables
 const speed = 160;
 let playerLeft;
-let plantLeft;
-let cursors;
+let keyW;
 let keyA;
+let keyS;
+let keyD;
 
 
 // setting up scene config
@@ -25,26 +26,51 @@ const left = new Phaser.Game(gameConfig);
 
 // preload functions
 function preloadLeft() {
-    this.load.image('plant', plant);
+    this.load.image("tiles", "https://www.mikewesthad.com/phaser-3-tilemap-blog-posts/post-1/assets/images/escheresque_dark.png");
+    this.load.tilemapTiledJSON("map", "https://www.mikewesthad.com/phaser-3-tilemap-blog-posts/post-1/assets/tilemaps/tuxemon-town.json");
+
+
+    this.load.image("repeating-background", "https://www.mikewesthad.com/phaser-3-tilemap-blog-posts/post-1/assets/images/escheresque_dark.png");
+
     this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
 }
 
 // create functions
 function createLeft() {
-    plantLeft = this.physics.add.sprite(10, 543, 'plant');
-    plantLeft.name = 'plant'
+    const map = this.make.tilemap({ key: "map" });
 
+    const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
+
+    const belowLayer = map.createStaticLayer("Below Player", tileset, 0, 0);
+    const worldLayer = map.createStaticLayer("World", tileset, 0, 0);
+    // const aboveLayer = map.createStaticLayer("Above Player", tileset, 0, 0);
+
+
+    const camera = this.cameras.main;
+
+    console.log("map", map);
+
+
+    const { width, height } = this.sys.game.config;
+    const bg = this.add.tileSprite(0, 0, map.widthInPixels, map.heightInPixels, "repeating-background");
+    bg.setOrigin(0, 0);
+    // worldLayer.setCollisionByProperty({ collides: true });
+    // aboveLayer.setDepth(10);
+    const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
     playerLeft = this.physics.add.sprite(300, 450, 'dude');
-    playerLeft.setCollideWorldBounds(true);
+    this.physics.add.collider(playerLeft, worldLayer);
+    camera.startFollow(playerLeft);
+    camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-
+    keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+    keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
-    this.physics.add.overlap(playerLeft, plantLeft, interact, null, this);
 
     function interact() {
         if (keyA.isDown) {
-            emitter.emit('aPressed', plantLeft)
+            // emitter.emit('aPressed', obj)
         }
     }
 
@@ -69,30 +95,28 @@ function createLeft() {
     });
 
 
-    cursors = this.input.keyboard.createCursorKeys();
 
 }
 
 
 // update functions 
-function updateLeft() {
+function updateLeft(time, delta) {
 
     playerLeft.setVelocity(0)
-    plantLeft.setVelocity(0)
 
 
-    if (cursors.left.isDown) {
+    if (keyA.isDown) {
         playerLeft.setVelocityX(-speed);
         playerLeft.anims.play('left', true);
     }
-    else if (cursors.right.isDown) {
+    else if (keyD.isDown) {
         playerLeft.setVelocityX(speed);
         playerLeft.anims.play('right', true);
     }
-    else if (cursors.up.isDown) {
+    else if (keyW.isDown) {
         playerLeft.setVelocityY(-speed);
     }
-    else if (cursors.down.isDown) {
+    else if (keyS.isDown) {
         playerLeft.setVelocityY(speed);
     }
     else {

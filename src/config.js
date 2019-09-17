@@ -10,6 +10,7 @@ const gameConfig = {
     parent: "phaser-example",
     width: (width / 2),
     height: height,
+    pixelArt: true,
     physics: {
         default: 'arcade',
         arcade: {
