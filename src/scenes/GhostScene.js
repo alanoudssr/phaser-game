@@ -1,6 +1,11 @@
 import { CST } from "../CST";
 import Phaser from 'phaser';
+<<<<<<< HEAD
 import dude from "../assets/Owlet.png";
+=======
+import dude from "../assets/dude.png";
+import sparkle from "../assets/sparkle.png";
+>>>>>>> 218f8f75a604b98fe464f3fbcefb51068639bb4f
 import leftMap from "../assets/maps/leftMap.json";
 import darkTileSet from "../assets/maps/tilesets/darkTileSet.png";
 import blue from "../assets/blue.png";
@@ -35,7 +40,8 @@ export default class GhostScene extends Phaser.Scene {
         this.load.spritesheet('ghost', dude, { frameWidth: 32, frameHeight: 30 });
         this.load.image("blue", blue);
         this.load.bitmapFont('desyrel', fontPng, fontXml);
-        this.load.spritesheet('mailMan', dude, { frameWidth: 32, frameHeight: 30 });
+        this.load.spritesheet('ghost', dude, { frameWidth: 32, frameHeight: 30 });
+        this.load.spritesheet('mailMan', sparkle, { frameWidth: 32, frameHeight: 48 });
     }
 
     // create functions5
@@ -69,6 +75,7 @@ export default class GhostScene extends Phaser.Scene {
 
         this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
         this.mailMan = this.physics.add.sprite(300, 850, 'mailMan');
+        // this.mailMan = this.physics.add.sprite(waitingMail.x, waitingMail.y, 'mailMan');
 
         camera.startFollow(this.ghost);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -113,7 +120,10 @@ this.mailMan.visible = false
             // this.path.draw(graphics, 128);
             // ///
 
+            graphics.lineStyle(0, 0xffffff, 1);
 
+            this.path.draw(graphics, 128);
+            ///
 
 
         }
@@ -143,6 +153,19 @@ this.mailMan.visible = false
             frameRate: 10,
             repeat: -1
         });
+
+        this.anims.create({
+            key: 'round',
+            frames: this.anims.generateFrameNumbers('mailMan', { start: 0, end: 4 }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+
+        this.mailMan.anims.play('round', true)
+
+
+
     }
     checkOverlap(spriteA, spriteB, range = 100) {
         var boundsA = spriteA.getBounds();
@@ -164,6 +187,7 @@ this.mailMan.visible = false
             this.mailMan.visible = false;
 
         }
+
 
         //
         this.t += 0.005;
@@ -197,7 +221,6 @@ this.mailMan.visible = false
             this.ghost.setVelocityX(0);
             this.ghost.anims.play('turn');
         }
-
     }
     positionOnPath(data) {
         var pathVector = this.path.getPoint(this.t + ((6 - data.index) * 0.03));
