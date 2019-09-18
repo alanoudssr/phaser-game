@@ -1,33 +1,190 @@
 import { CST } from "../CST";
 import Phaser from 'phaser';
+import dude from "../assets/Owlet.png";
+import leftMap from "../assets/maps/leftMap.json";
+import darkTileSet from "../assets/maps/tilesets/darkTileSet.png";
+import blue from "../assets/blue.png";
+import fontPng from "../assets/fonts/bitmap/chiller.png"
+import fontXml from "../assets/fonts/bitmap/chiller.xml"
 
 export default class GhostScene extends Phaser.Scene {
-    constructor() {
+    constructor(config) {
         super({
             key: CST.SCENES.GHOST,
             active: true
-        })
+        });
+        this.speed = 160;
+        this.ghost;
+        this.keyW;
+        this.keyA;
+        this.keyS;
+        this.keyD;
+        this.t = 0;
+        this.path;
+        this.positionOnPath = this.positionOnPath.bind(this)
     }
 
     init() {
 
     }
     preload() {
-
+        this.load.image("tilesG", darkTileSet);
+        this.load.tilemapTiledJSON("mapG", leftMap);
+        this.load.spritesheet('ghost', dude, { frameWidth: 32, frameHeight: 30 });
+        this.load.image("blue", blue);
+        this.load.bitmapFont('desyrel', fontPng, fontXml);
+        this.load.spritesheet('mailMan', dude, { frameWidth: 32, frameHeight: 30 });
     }
 
-    // create functions
+    // create functions5
     create() {
+
+
+
         let { width, height } = this.sys.game.canvas;
+        this.cameras.main.setViewport(0, 0, width / 2, height);
 
-        this.cameras.main.setViewport(0, 0, width / 2, height / 2);
+        const map = this.make.tilemap({ key: "mapG" });
 
-        this.add.text(20, 20, "Ghost Scene");
+        const tileset = map.addTilesetImage("darkTileSet", "tilesG");
+
+        const belowLayer = map.createStaticLayer("Below Player", tileset, 0, 0);
+
+
+        const camera = this.cameras.main;
+
+
+        const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
+        const waitingMail = map.findObject("Objects", obj => obj.name === "waiting for mail");
+
+        const particles = this.add.particles('blue');
+        const emitterLeft = particles.createEmitter({
+            speedX: { min: -10, max: 10 },
+            speedY: { min: -30, max: 10 }, 
+            scale: { start: 1, end: 0 },
+            blendMode: 'ADD'
+        })
+
+        this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
+        this.mailMan = this.physics.add.sprite(300, 850, 'mailMan');
+
+        camera.startFollow(this.ghost);
+        camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        
+ 
+        emitterLeft.startFollow(this.ghost);
+
+
+
+        this.physics.add.overlap(this.ghost, this.mailMan, mailFun, null, this);
+
+        function mailFun() {
+            if (!this.overlapTriggered) {
+
+                /// text
+                this.path = new Phaser.Curves.Path(this.mailMan.x + 100 , this.mailMan.y);
+
+                this.path.circleTo(100);
+                // this.path.splineTo([waitingMail.x, waitingMail.y, waitingMail.x, waitingMail.y + 30, waitingMail.x, waitingMail.y + 40, waitingMail.x, waitingMail.y + 50, waitingMail.x, waitingMail.y + 100]);
+                // this.path.ellipseTo(waitingMail.x, waitingMail.y);
+                // this.path.ellipseTo(waitingMail.x, waitingMail.y);
+
+                var text = this.add.dynamicBitmapText(waitingMail.x, waitingMail.y, 'desyrel', 'Waiting for help', 50);
+
+                text.setDisplayCallback(this.positionOnPath);
+
+                var graphics = this.add.graphics();
+
+                graphics.lineStyle(1, 0xffffff, 1);
+
+                this.path.draw(graphics, 28);
+
+
+                this.overlapTriggered = true
+                console.log('hi');
+
+                setTimeout(() => {
+                    this.overlapTriggered = false
+                }, 200);
+            }
+        }
+
+        this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+        this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('ghost', { start: 0, end: 6 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'turn',
+            frames: [{ key: 'ghost', frame: 7 }],
+            frameRate: 20
+        });
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('ghost', { start: 9, end: 16 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+
+
+
 
     }
 
     // update functions 
     update() {
 
+        //
+        this.t += 0.001;
+
+        if (this.t >= (1 - 0.24)) {
+            this.t = 0;
+        }
+        //
+
+        let { width, height } = this.sys.game.canvas;
+        this.cameras.main.setViewport(0, 0, width / 2, height);
+
+        this.ghost.setVelocity(0)
+
+
+        if (this.keyA.isDown) {
+            this.ghost.setVelocityX(-this.speed);
+            this.ghost.anims.play('left', true);
+        }
+        else if (this.keyD.isDown) {
+            this.ghost.setVelocityX(this.speed);
+            this.ghost.anims.play('right', true);
+        }
+        else if (this.keyW.isDown) {
+            this.ghost.setVelocityY(-this.speed);
+        }
+        else if (this.keyS.isDown) {
+            this.ghost.setVelocityY(this.speed);
+        }
+        else {
+            this.ghost.setVelocityX(0);
+            this.ghost.anims.play('turn');
+        }
+
+    }
+    positionOnPath(data) {
+        var pathVector = this.path.getPoint(this.t + ((6 - data.index) * 0.03));
+
+        if (pathVector) {
+            data.x = pathVector.x;
+            data.y = pathVector.y;
+        }
+
+        return data;
     }
 }

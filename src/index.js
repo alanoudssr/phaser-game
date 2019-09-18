@@ -6,13 +6,25 @@ import Phaser from 'phaser';
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
 const config = {
-    type: Phaser.AUTO,
-    width: WIDTH,
-    height: HEIGHT,
-    backgroundColor:"#392542",
-    scene:[
-      GameScene,GhostScene, MemoryScene
-    ]
+  type: Phaser.AUTO,
+  width: WIDTH,
+  height: HEIGHT,
+  pixelArt: true,
+  plugins: {
+    global: [],
+    scene: []
+  },
+  backgroundColor: "#392542",
+  scene: [
+    GameScene, GhostScene, MemoryScene
+  ],
+  physics: {
+    default: 'arcade',
+    arcade: {
+      gravity: { y: 0 },
+      debug: false
+    }
+  }
 }
 const game = new Phaser.Game(config);
 
