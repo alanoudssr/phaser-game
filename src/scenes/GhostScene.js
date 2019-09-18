@@ -33,7 +33,7 @@ export default class GhostScene extends Phaser.Scene {
         this.load.spritesheet('ghost', dude, { frameWidth: 32, frameHeight: 30 });
         this.load.image("blue", blue);
         this.load.bitmapFont('desyrel', fontPng, fontXml);
-        this.load.spritesheet('mailMan', dude, { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet('mailMan', dude, { frameWidth: 32, frameHeight: 30 });
     }
 
     // create functions5
@@ -66,7 +66,7 @@ export default class GhostScene extends Phaser.Scene {
         })
 
         this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
-        this.mailMan = this.physics.add.sprite(waitingMail.x, waitingMail.y, 'mailMan');
+        this.mailMan = this.physics.add.sprite(300, 850, 'mailMan');
 
         camera.startFollow(this.ghost);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -82,23 +82,22 @@ export default class GhostScene extends Phaser.Scene {
             if (!this.overlapTriggered) {
 
                 /// text
-                this.path = new Phaser.Curves.Path(waitingMail.x, waitingMail.y);
+                this.path = new Phaser.Curves.Path(this.mailMan.x + 100 , this.mailMan.y);
 
-                this.path.lineTo(waitingMail.x + 1000, waitingMail.y);
-                this.path.splineTo([waitingMail.x, waitingMail.y, waitingMail.x, waitingMail.y - 200, waitingMail.x, waitingMail.y - 300, waitingMail.x, waitingMail.y - 400, waitingMail.x, waitingMail.y - 500]);
-                this.path.lineTo(waitingMail.x, waitingMail.y);
+                this.path.circleTo(100);
+                // this.path.splineTo([waitingMail.x, waitingMail.y, waitingMail.x, waitingMail.y + 30, waitingMail.x, waitingMail.y + 40, waitingMail.x, waitingMail.y + 50, waitingMail.x, waitingMail.y + 100]);
+                // this.path.ellipseTo(waitingMail.x, waitingMail.y);
+                // this.path.ellipseTo(waitingMail.x, waitingMail.y);
 
-                var text = this.add.dynamicBitmapText(0, 0, 'desyrel', 'Waiting', 44);
+                var text = this.add.dynamicBitmapText(waitingMail.x, waitingMail.y, 'desyrel', 'Waiting for help', 50);
 
                 text.setDisplayCallback(this.positionOnPath);
 
                 var graphics = this.add.graphics();
 
-                graphics.lineStyle(0, 0xffffff, 1);
+                graphics.lineStyle(1, 0xffffff, 1);
 
-                this.path.draw(graphics, 128);
-                ///
-
+                this.path.draw(graphics, 28);
 
 
                 this.overlapTriggered = true
@@ -106,7 +105,7 @@ export default class GhostScene extends Phaser.Scene {
 
                 setTimeout(() => {
                     this.overlapTriggered = false
-                }, 2000);
+                }, 200);
             }
         }
 
@@ -179,7 +178,7 @@ export default class GhostScene extends Phaser.Scene {
 
     }
     positionOnPath(data) {
-        var pathVector = this.path.getPoint(this.t + ((6 - data.index) * 0.04));
+        var pathVector = this.path.getPoint(this.t + ((6 - data.index) * 0.03));
 
         if (pathVector) {
             data.x = pathVector.x;
