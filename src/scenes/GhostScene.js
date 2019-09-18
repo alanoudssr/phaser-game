@@ -79,34 +79,15 @@ export default class GhostScene extends Phaser.Scene {
         emitterLeft.startFollow(this.ghost);
 
 
-this.sparkle.visible = false
+        this.sparkle.visible = false
         this.physics.add.overlap(this.ghost, this.sparkle, mailFun, null, this);
         this.text = this.add.text(this.sparkle.x - 25, this.sparkle.y - 50, "Don't touch me")
         this.text.visible = false;
 
         function mailFun() {
-
-            // /// text
-            // this.path = new Phaser.Curves.Path(waitingMail.x, waitingMail.y);
+        
             this.text.visible = true
-            // this.path.lineTo(waitingMail.x + 1000, waitingMail.y);
-            // this.path.splineTo([waitingMail.x, waitingMail.y, waitingMail.x, waitingMail.y - 200, waitingMail.x, waitingMail.y - 300, waitingMail.x, waitingMail.y - 400, waitingMail.x, waitingMail.y - 500]);
-            // this.path.lineTo(waitingMail.x, waitingMail.y);
-
-            // var text = this.add.dynamicBitmapText(0, 0, 'desyrel', 'Waiting', 44);
-
-            // text.setDisplayCallback(this.positionOnPath);
-
-            // var graphics = this.add.graphics();
-
-            // graphics.lineStyle(0, 0xffffff, 1);
-
-            // this.path.draw(graphics, 128);
-            // ///
-
-
-
-
+        
         }
 
 
@@ -134,6 +115,17 @@ this.sparkle.visible = false
             frameRate: 10,
             repeat: -1
         });
+
+        this.anims.create({
+            key: 'round',
+            frames: this.anims.generateFrameNumbers('sparkle', { start: 0, end: 4 }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+
+        this.sparkle.anims.play('round', true)
+
     }
     checkOverlap(spriteA, spriteB, range = 100) {
         var boundsA = spriteA.getBounds();
