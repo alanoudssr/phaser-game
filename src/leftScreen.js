@@ -6,11 +6,21 @@ const { dude, plant, leftMap, darkTileSet } = assets
 // global variables
 const speed = 160;
 let playerLeft;
+let player2;
+let overlapTriggered = false;
 let keyW;
 let keyA;
 let keyS;
 let keyD;
 
+var bpmText;
+var text = "Lorem ipsum ";
+var words = [
+    'dolor', 'sit', 'amet', 'consectetuer', 'adipiscing', 'elit', 'aenean',
+    'commodo', 'ligula', 'eget', 'massa', 'sociis', 'natoque', 'penatibus',
+    'et', 'magnis', 'dis', 'parturient', 'montes'];
+var run = 5;
+var current = 2;
 
 // setting up scene config
 gameConfig.scene = {
@@ -28,11 +38,14 @@ const left = new Phaser.Game(gameConfig);
 function preloadLeft() {
     this.load.image("tiles", darkTileSet);
     this.load.tilemapTiledJSON("map", leftMap);
+    this.load.spritesheet('dude2', dude, { frameWidth: 32, frameHeight: 48 });
     this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
+    // this.load.bitmapFont('gem', 'assets/fonts/bitmapFonts/gem.png', 'assets/fonts/bitmapFonts/gem.xml');
 }
 
 // create functions
 function createLeft() {
+
     const map = this.make.tilemap({ key: "map" });
 
     const tileset = map.addTilesetImage("darkTileSet", "tiles");
@@ -50,13 +63,38 @@ function createLeft() {
     const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
     const waitingMail = map.findObject("Objects", obj => obj.name === "waiting for mail");
     playerLeft = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'dude');
+    player2 = this.physics.add.sprite(waitingMail.x, waitingMail.y, 'dude');
     camera.startFollow(playerLeft);
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    this.physics.add.overlap(playerLeft, waitingMail, mailFun, null, this);
+
+    // this.physics.add.collider(playerLeft, player2);
+    this.physics.add.overlap(playerLeft, player2, mailFun, null, this);
+
+    // // 
+    // bmpText = this.add.bitmapText(32, 32, 'gem', text, 16);
+    // bmpText.maxWidth = 400;
+
+    // //  A visual marker to show where 400px width is
+    // var marker = this.add.graphics(432, 0);
+    // marker.beginFill(0xa6e22e);
+    // marker.drawRect(0, 0, 1, this.height);
+    // marker.endFill();
+
+    // //  Write out 200 random words
+    // this.time.events.repeat(100, 200, addText, this);
+    // // 
 
     function mailFun() {
+        if (!overlapTriggered) {
+            this.add.text(spawnPoint.x, spawnPoint.y, 'Hello World', { fontFamily: '"Roboto Condensed"' });
+            overlapTriggered = true
+            console.log('hi');
 
+            setTimeout(() => {
+                overlapTriggered = false
+            }, 2000);
+        }
     }
 
     keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
