@@ -58,7 +58,7 @@ export default class MemoryScene extends Phaser.Scene {
         // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
         camera.setBounds(0, 0, map.widthInPixels+(width/ 2), map.heightInPixels);
 
-        this.playerRight = this.add.sprite(130, 450, 'dude');
+        this.playerRight = this.physics.add.sprite(130, 450, 'dude');
 
 
         // this.anims.create({
