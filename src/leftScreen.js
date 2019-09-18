@@ -1,6 +1,6 @@
 import config from "./config.js";
-const { Phaser, assets, emitter, gameConfig } = config
-const { dude, plant, leftMap, darkTileSet } = assets
+const { Phaser, assets, gameConfig } = config
+const { dude, leftMap, darkTileSet, blue } = assets
 
 
 // global variables
@@ -10,7 +10,8 @@ let keyW;
 let keyA;
 let keyS;
 let keyD;
-
+let emitterLeft;
+let particles;
 
 // setting up scene config
 gameConfig.scene = {
@@ -29,6 +30,7 @@ function preloadLeft() {
     this.load.image("tiles", darkTileSet);
     this.load.tilemapTiledJSON("map", leftMap);
     this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
+    this.load.image('blue', blue);
 }
 
 // create functions
@@ -49,9 +51,18 @@ function createLeft() {
 
     const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
     const waitingMail = map.findObject("Objects", obj => obj.name === "waiting for mail");
+    particles = this.add.particles('blue');
+    emitterLeft = particles.createEmitter({
+        speedX: { min: -100, max: 100 },
+        speedY: { min: -100, max: 100 }, 
+        scale: { start: 0, end: 1 },
+        blendMode: 'ADD'
+    })
+ 
     playerLeft = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'dude');
     camera.startFollow(playerLeft);
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+    emitterLeft.startFollow(playerLeft);
 
     this.physics.add.overlap(playerLeft, waitingMail, mailFun, null, this);
 
@@ -63,6 +74,8 @@ function createLeft() {
     keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+    
 
     this.anims.create({
         key: 'left',

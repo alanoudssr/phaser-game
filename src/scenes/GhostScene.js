@@ -1,8 +1,10 @@
 import { CST } from "../CST";
 import Phaser from 'phaser';
-import dude from "../assets/dude.png";
+import dude from "../assets/Owlet.png";
 import leftMap from "../assets/maps/leftMap.json";
 import darkTileSet from "../assets/maps/tilesets/darkTileSet.png";
+import blue from "../assets/blue.png";
+
 export default class GhostScene extends Phaser.Scene {
     constructor(config) {
         super({
@@ -23,7 +25,8 @@ export default class GhostScene extends Phaser.Scene {
     preload() {
         this.load.image("tilesG", darkTileSet);
         this.load.tilemapTiledJSON("mapG", leftMap);
-        this.load.spritesheet('ghost', dude, { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet('ghost', dude, { frameWidth: 32, frameHeight: 30 });
+        this.load.image("blue", blue);
     }
 
     // create functions5
@@ -44,9 +47,20 @@ export default class GhostScene extends Phaser.Scene {
         const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
         const waitingMail = map.findObject("Objects", obj => obj.name === "waiting for mail");
 
+        const particles = this.add.particles('blue');
+        const emitterLeft = particles.createEmitter({
+            speedX: { min: -10, max: 10 },
+            speedY: { min: -30, max: 10 }, 
+            scale: { start: 1, end: 0 },
+            blendMode: 'ADD'
+        })
+
         this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
         camera.startFollow(this.ghost);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        
+ 
+        emitterLeft.startFollow(this.ghost);
 
         this.physics.add.overlap(this.ghost, waitingMail, mailFun, null, this);
 
@@ -61,20 +75,20 @@ export default class GhostScene extends Phaser.Scene {
 
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('ghost', { start: 0, end: 3 }),
+            frames: this.anims.generateFrameNumbers('ghost', { start: 0, end: 6 }),
             frameRate: 10,
             repeat: -1
         });
 
         this.anims.create({
             key: 'turn',
-            frames: [{ key: 'ghost', frame: 4 }],
+            frames: [{ key: 'ghost', frame: 7 }],
             frameRate: 20
         });
 
         this.anims.create({
             key: 'right',
-            frames: this.anims.generateFrameNumbers('ghost', { start: 5, end: 8 }),
+            frames: this.anims.generateFrameNumbers('ghost', { start: 9, end: 16 }),
             frameRate: 10,
             repeat: -1
         });
