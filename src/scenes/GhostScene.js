@@ -1,11 +1,7 @@
 import { CST } from "../CST";
 import Phaser from 'phaser';
-<<<<<<< HEAD
 import dude from "../assets/Owlet.png";
-=======
-import dude from "../assets/dude.png";
 import sparkle from "../assets/sparkle.png";
->>>>>>> 218f8f75a604b98fe464f3fbcefb51068639bb4f
 import leftMap from "../assets/maps/leftMap.json";
 import darkTileSet from "../assets/maps/tilesets/darkTileSet.png";
 import blue from "../assets/blue.png";
@@ -38,10 +34,10 @@ export default class GhostScene extends Phaser.Scene {
         this.load.image("tilesG", darkTileSet);
         this.load.tilemapTiledJSON("mapG", leftMap);
         this.load.spritesheet('ghost', dude, { frameWidth: 32, frameHeight: 30 });
+        this.load.spritesheet('sparkle', sparkle, { frameWidth: 32, frameHeight: 48 });
         this.load.image("blue", blue);
         this.load.bitmapFont('desyrel', fontPng, fontXml);
-        this.load.spritesheet('ghost', dude, { frameWidth: 32, frameHeight: 30 });
-        this.load.spritesheet('mailMan', sparkle, { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet('mailMan', dude, { frameWidth: 32, frameHeight: 30 });
     }
 
     // create functions5
@@ -63,7 +59,7 @@ export default class GhostScene extends Phaser.Scene {
 
 
         const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
-        const waitingMail = map.findObject("Objects", obj => obj.name === "waiting for mail");
+        const sparkle = map.findObject("Objects", obj => obj.name === "waiting for mail");
 
         const particles = this.add.particles('blue');
         const emitterLeft = particles.createEmitter({
@@ -74,8 +70,7 @@ export default class GhostScene extends Phaser.Scene {
         })
 
         this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
-        this.mailMan = this.physics.add.sprite(300, 850, 'mailMan');
-        // this.mailMan = this.physics.add.sprite(waitingMail.x, waitingMail.y, 'mailMan');
+        this.sparkle = this.physics.add.sprite(300, 850, 'sparkle');
 
         camera.startFollow(this.ghost);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -84,23 +79,12 @@ export default class GhostScene extends Phaser.Scene {
         emitterLeft.startFollow(this.ghost);
 
 
-this.mailMan.visible = false
-        this.physics.add.overlap(this.ghost, this.mailMan, mailFun, null, this);
-        this.text = this.add.text(this.mailMan.x - 25, this.mailMan.y - 50, "Don't touch me")
+this.sparkle.visible = false
+        this.physics.add.overlap(this.ghost, this.sparkle, mailFun, null, this);
+        this.text = this.add.text(this.sparkle.x - 25, this.sparkle.y - 50, "Don't touch me")
         this.text.visible = false;
 
         function mailFun() {
-            // if (!this.overlapTriggered) {
-
-            //     /// text   
-            //     var text = this.add.dynamicBitmapText(this.mailMan.x - 30, this.mailMan.y - 80, 'desyrel', 'waiting for something...', 50);
-
-            //     this.overlapTriggered = true
-               
-            //     setTimeout(() => {
-            //         this.overlapTriggered = false
-            //     }, 200);
-            // }
 
             // /// text
             // this.path = new Phaser.Curves.Path(waitingMail.x, waitingMail.y);
@@ -120,10 +104,7 @@ this.mailMan.visible = false
             // this.path.draw(graphics, 128);
             // ///
 
-            graphics.lineStyle(0, 0xffffff, 1);
 
-            this.path.draw(graphics, 128);
-            ///
 
 
         }
@@ -153,19 +134,6 @@ this.mailMan.visible = false
             frameRate: 10,
             repeat: -1
         });
-
-        this.anims.create({
-            key: 'round',
-            frames: this.anims.generateFrameNumbers('mailMan', { start: 0, end: 4 }),
-            frameRate: 5,
-            repeat: -1
-        });
-
-
-        this.mailMan.anims.play('round', true)
-
-
-
     }
     checkOverlap(spriteA, spriteB, range = 100) {
         var boundsA = spriteA.getBounds();
@@ -178,16 +146,15 @@ this.mailMan.visible = false
     }
     // update functions 
     update() {
-        if (!this.checkOverlap(this.ghost, this.mailMan)) {
+        if (!this.checkOverlap(this.ghost, this.sparkle)) {
             this.text.visible = false;
         }
-        if (this.checkOverlap(this.ghost, this.mailMan, 400)) {
-            this.mailMan.visible = true;
+        if (this.checkOverlap(this.ghost, this.sparkle, 400)) {
+            this.sparkle.visible = true;
         } else {
-            this.mailMan.visible = false;
+            this.sparkle.visible = false;
 
         }
-
 
         //
         this.t += 0.005;
@@ -221,6 +188,7 @@ this.mailMan.visible = false
             this.ghost.setVelocityX(0);
             this.ghost.anims.play('turn');
         }
+
     }
     positionOnPath(data) {
         var pathVector = this.path.getPoint(this.t + ((6 - data.index) * 0.03));
