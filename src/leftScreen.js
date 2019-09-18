@@ -1,6 +1,6 @@
 import config from "./config.js";
 const { Phaser, assets, emitter, gameConfig } = config
-const { dude, plant } = assets
+const { dude, plant, leftMap, darkTileSet } = assets
 
 
 // global variables
@@ -26,12 +26,8 @@ const left = new Phaser.Game(gameConfig);
 
 // preload functions
 function preloadLeft() {
-    this.load.image("tiles", "https://www.mikewesthad.com/phaser-3-tilemap-blog-posts/post-1/assets/images/escheresque_dark.png");
-    this.load.tilemapTiledJSON("map", "https://www.mikewesthad.com/phaser-3-tilemap-blog-posts/post-1/assets/tilemaps/tuxemon-town.json");
-
-
-    this.load.image("repeating-background", "https://www.mikewesthad.com/phaser-3-tilemap-blog-posts/post-1/assets/images/escheresque_dark.png");
-
+    this.load.image("tiles", darkTileSet);
+    this.load.tilemapTiledJSON("map", leftMap);
     this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
 }
 
@@ -39,11 +35,9 @@ function preloadLeft() {
 function createLeft() {
     const map = this.make.tilemap({ key: "map" });
 
-    const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
+    const tileset = map.addTilesetImage("darkTileSet", "tiles");
 
     const belowLayer = map.createStaticLayer("Below Player", tileset, 0, 0);
-    const worldLayer = map.createStaticLayer("World", tileset, 0, 0);
-    // const aboveLayer = map.createStaticLayer("Above Player", tileset, 0, 0);
 
 
     const camera = this.cameras.main;
@@ -52,27 +46,23 @@ function createLeft() {
 
 
     const { width, height } = this.sys.game.config;
-    const bg = this.add.tileSprite(0, 0, map.widthInPixels, map.heightInPixels, "repeating-background");
-    bg.setOrigin(0, 0);
-    // worldLayer.setCollisionByProperty({ collides: true });
-    // aboveLayer.setDepth(10);
+
     const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
-    playerLeft = this.physics.add.sprite(300, 450, 'dude');
-    this.physics.add.collider(playerLeft, worldLayer);
+    const waitingMail = map.findObject("Objects", obj => obj.name === "waiting for mail");
+    playerLeft = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'dude');
     camera.startFollow(playerLeft);
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+
+    this.physics.add.overlap(playerLeft, waitingMail, mailFun, null, this);
+
+    function mailFun() {
+
+    }
 
     keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-
-
-    function interact() {
-        if (keyA.isDown) {
-            // emitter.emit('aPressed', obj)
-        }
-    }
 
     this.anims.create({
         key: 'left',

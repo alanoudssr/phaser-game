@@ -2,12 +2,11 @@ import config from "./config.js";
 const { Phaser, assets, emitter, gameConfig } = config
 
 
-const { dude, plant } = assets
+const { dude, rightMap } = assets
 
 // global variables
 const speed = 160;
 let playerRight;
-let plantRight;
 let cursors;
 let controls;
 
@@ -27,8 +26,7 @@ const right = new Phaser.Game(gameConfig);
 
 function preloadRight() {
     this.load.image("tiles", "https://www.mikewesthad.com/phaser-3-tilemap-blog-posts/post-1/assets/tilesets/tuxmon-sample-32px-extruded.png");
-    this.load.tilemapTiledJSON("map", "https://www.mikewesthad.com/phaser-3-tilemap-blog-posts/post-1/assets/tilemaps/tuxemon-town.json");
-    this.load.image('plant', plant);
+    this.load.tilemapTiledJSON("map", rightMap);
     this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
 }
 
@@ -65,7 +63,6 @@ function createRight() {
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
 
-    plantRight = this.physics.add.sprite(10, 543, 'plant');
 
     playerRight = this.physics.add.sprite(130, 450, 'dude');
     playerRight.setCollideWorldBounds(true);
@@ -95,7 +92,6 @@ function createRight() {
     emitter.on('aPressed', func, this)
 
     function func(objectRight) {
-        plantRight.setVelocityX(speed)
         objectRight.setScale(1.5)
     }
 }
@@ -103,7 +99,6 @@ function createRight() {
 
 // update functions 
 function updateRight(time, delta) {
-    plantRight.setVelocity(0)
     controls.update(delta);
 }
 
