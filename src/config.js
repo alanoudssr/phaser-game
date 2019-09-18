@@ -12,7 +12,7 @@ const height = window.innerHeight
 const gameConfig = {
     type: Phaser.AUTO,
     parent: "phaser-example",
-    width: (width / 2),
+    width: ((width / 2) - 50),
     height: height,
     pixelArt: true,
     plugins: {
