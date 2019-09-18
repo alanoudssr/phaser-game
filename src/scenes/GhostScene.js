@@ -21,6 +21,8 @@ export default class GhostScene extends Phaser.Scene {
         this.t = 0;
         this.path;
         this.positionOnPath = this.positionOnPath.bind(this)
+        this.text
+        this.checkOverlap = this.checkOverlap.bind(this);
     }
 
     init() {
@@ -62,40 +64,36 @@ export default class GhostScene extends Phaser.Scene {
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
 
-
+this.mailMan.visible = false
         this.physics.add.overlap(this.ghost, this.mailMan, mailFun, null, this);
+        this.text = this.add.text(this.mailMan.x - 25, this.mailMan.y - 50, "Don't touch me")
+        this.text.visible = false;
 
         function mailFun() {
-            if (!this.overlapTriggered) {
 
-                /// text
-                this.path = new Phaser.Curves.Path(waitingMail.x, waitingMail.y);
+            // /// text
+            // this.path = new Phaser.Curves.Path(waitingMail.x, waitingMail.y);
+            this.text.visible = true
+            // this.path.lineTo(waitingMail.x + 1000, waitingMail.y);
+            // this.path.splineTo([waitingMail.x, waitingMail.y, waitingMail.x, waitingMail.y - 200, waitingMail.x, waitingMail.y - 300, waitingMail.x, waitingMail.y - 400, waitingMail.x, waitingMail.y - 500]);
+            // this.path.lineTo(waitingMail.x, waitingMail.y);
 
-                this.path.lineTo(waitingMail.x + 1000, waitingMail.y);
-                this.path.splineTo([waitingMail.x, waitingMail.y, waitingMail.x, waitingMail.y - 200, waitingMail.x, waitingMail.y - 300, waitingMail.x, waitingMail.y - 400, waitingMail.x, waitingMail.y - 500]);
-                this.path.lineTo(waitingMail.x, waitingMail.y);
+            // var text = this.add.dynamicBitmapText(0, 0, 'desyrel', 'Waiting', 44);
 
-                var text = this.add.dynamicBitmapText(0, 0, 'desyrel', 'Waiting', 44);
+            // text.setDisplayCallback(this.positionOnPath);
 
-                text.setDisplayCallback(this.positionOnPath);
+            // var graphics = this.add.graphics();
 
-                var graphics = this.add.graphics();
+            // graphics.lineStyle(0, 0xffffff, 1);
 
-                graphics.lineStyle(0, 0xffffff, 1);
-
-                this.path.draw(graphics, 128);
-                ///
-
+            // this.path.draw(graphics, 128);
+            // ///
 
 
-                this.overlapTriggered = true
-                console.log('hi');
 
-                setTimeout(() => {
-                    this.overlapTriggered = false
-                }, 2000);
-            }
+
         }
+
 
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -127,9 +125,26 @@ export default class GhostScene extends Phaser.Scene {
 
 
     }
-
+    checkOverlap(spriteA, spriteB, range = 100) {
+        var boundsA = spriteA.getBounds();
+        var boundsB = spriteB.getBounds();
+        boundsB.width += range;
+        boundsB.height += range;
+        boundsB.x -= range / 2;
+        boundsB.y -= range / 2;
+        return Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB);
+    }
     // update functions 
     update() {
+        if (!this.checkOverlap(this.ghost, this.mailMan)) {
+            this.text.visible = false;
+        }
+        if (this.checkOverlap(this.ghost, this.mailMan, 400)) {
+            this.mailMan.visible = true;
+        } else {
+            this.mailMan.visible = false;
+
+        }
 
         //
         this.t += 0.001;
