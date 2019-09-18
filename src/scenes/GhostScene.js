@@ -81,28 +81,11 @@ export default class GhostScene extends Phaser.Scene {
         function mailFun() {
             if (!this.overlapTriggered) {
 
-                /// text
-                this.path = new Phaser.Curves.Path(this.mailMan.x + 100 , this.mailMan.y);
-
-                this.path.circleTo(100);
-                // this.path.splineTo([waitingMail.x, waitingMail.y, waitingMail.x, waitingMail.y + 30, waitingMail.x, waitingMail.y + 40, waitingMail.x, waitingMail.y + 50, waitingMail.x, waitingMail.y + 100]);
-                // this.path.ellipseTo(waitingMail.x, waitingMail.y);
-                // this.path.ellipseTo(waitingMail.x, waitingMail.y);
-
-                var text = this.add.dynamicBitmapText(waitingMail.x, waitingMail.y, 'desyrel', 'Waiting for help', 50);
-
-                text.setDisplayCallback(this.positionOnPath);
-
-                var graphics = this.add.graphics();
-
-                graphics.lineStyle(1, 0xffffff, 1);
-
-                this.path.draw(graphics, 28);
-
+                /// text   
+                var text = this.add.dynamicBitmapText(this.mailMan.x - 30, this.mailMan.y - 80, 'desyrel', 'waiting for something...', 50);
 
                 this.overlapTriggered = true
-                console.log('hi');
-
+               
                 setTimeout(() => {
                     this.overlapTriggered = false
                 }, 200);
@@ -133,18 +116,13 @@ export default class GhostScene extends Phaser.Scene {
             frameRate: 10,
             repeat: -1
         });
-
-
-
-
-
     }
 
     // update functions 
     update() {
 
         //
-        this.t += 0.001;
+        this.t += 0.005;
 
         if (this.t >= (1 - 0.24)) {
             this.t = 0;
