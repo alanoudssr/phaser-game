@@ -1,7 +1,7 @@
 import { CST } from "../CST";
 import Phaser from 'phaser';
 import dude from "../assets/dude.png";
-import rightMap from "../assets/maps/rightMap.json";
+
 
 export default class MemoryScene extends Phaser.Scene {
     constructor() {
@@ -20,7 +20,7 @@ export default class MemoryScene extends Phaser.Scene {
     }
     preload() {
         this.load.image("tiles", "https://www.mikewesthad.com/phaser-3-tilemap-blog-posts/post-1/assets/tilesets/tuxmon-sample-32px-extruded.png");
-        this.load.tilemapTiledJSON("map", rightMap);
+        this.load.tilemapTiledJSON("map", "https://www.mikewesthad.com/phaser-3-tilemap-blog-posts/post-1/assets/tilemaps/tuxemon-town.json");
         this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
     }
 
@@ -56,30 +56,32 @@ export default class MemoryScene extends Phaser.Scene {
         });
 
         // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
-        camera.setBounds(0, 0, map.widthInPixels+(width/ 2), map.heightInPixels);
+        camera.setBounds(0, 0, map.widthInPixels+width/ 2, map.heightInPixels);
+
+        console.log(this)        
 
         this.playerRight = this.add.sprite(130, 450, 'dude');
 
 
-        this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-            frameRate: 10,
-            repeat: -1
-        });
+        // this.anims.create({
+        //     key: 'left',
+        //     frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        //     frameRate: 10,
+        //     repeat: -1
+        // });
 
-        this.anims.create({
-            key: 'turn',
-            frames: [{ key: 'dude', frame: 4 }],
-            frameRate: 20
-        });
+        // this.anims.create({
+        //     key: 'turn',
+        //     frames: [{ key: 'dude', frame: 4 }],
+        //     frameRate: 20
+        // });
 
-        this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-            frameRate: 10,
-            repeat: -1
-        });
+        // this.anims.create({
+        //     key: 'right',
+        //     frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        //     frameRate: 10,
+        //     repeat: -1
+        // });
 
 
 
