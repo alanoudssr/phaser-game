@@ -27,6 +27,7 @@ export default class GhostScene extends Phaser.Scene {
         this.bulliedMan;
         this.overworkedMan;
         this.checkOverlap = this.checkOverlap.bind(this);
+        this.inControll = true;
     }
 
     init() {
@@ -82,8 +83,8 @@ export default class GhostScene extends Phaser.Scene {
         this.thoughts = this.physics.add.group();
         this.fakeThoughts = this.physics.add.group();
 
-        this.mailMan = this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 20, y: 50, stepX: 250, stepY: 150 } })
-        this.mailMan = this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 1000, y: 1000, stepX: -250, stepY: -150 } })
+       this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 20, y: 50, stepX: 250, stepY: 150 } })
+       this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 1000, y: 1000, stepX: -250, stepY: -150 } })
 
         this.mailMan = this.thoughts.create(waitingMail.x, waitingMail.y, 'thought')
         this.overworkedMan = this.thoughts.create(overworked.x, overworked.y, 'thought')
@@ -99,16 +100,16 @@ export default class GhostScene extends Phaser.Scene {
      
         this.ghost.setCollideWorldBounds()
 
-        this.bulliedMan.name = 'bulliedMan'
-        this.overworkedMan.name = 'overworkedMan'
-        this.mailMan.name = 'mailMan'
-        this.prayingMan.name = 'praying'
-        this.suicidalMan.name = 'suicidal'
-        this.deathMan.name = 'death'
-        this.lostLove.name = 'lost love'
-        this.holeMan.name = 'hole'
-        this.mayorMan.name = 'mayor'
-        this.gardenerMan.name = 'gardener'
+        this.bulliedMan.name = "Please stop! What have I ever done to you!"
+        this.overworkedMan.name = "I am actively putting myself in hell everyday.\nfor what?"   
+        this.mailMan.name = 'Waiting.. waiting for you..'
+        this.prayingMan.name = "Dear God,\nyou are my only solace";
+        this.suicidalMan.name = "I can't take this anymore! Everyday is the same..\nIt's hopeless";
+        this.deathMan.name = "why.."
+        this.lostLove.name = "I hate this fountain!\nI hate everything that reminds me of you!";
+        this.holeMan.name = "OH GOD WHAT IF NO ONE FINDS ME!!!";
+        this.mayorMan.name = "I am failing you fathers.\nI can't be as good as you were";
+        this.gardenerMan.name = "Happy thoughts.. Happy thoughts.. Happy thoughts.."
 
         camera.startFollow(this.ghost);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -118,27 +119,7 @@ export default class GhostScene extends Phaser.Scene {
         this.text.visible = false;
 
         this.physics.add.overlap(this.ghost, this.thoughts, (player, thought) => {
-            if (thought.name == 'mailMan') {
-                this.text.text = 'Waiting.. waiting for you..';
-            } else if (thought.name == 'overworkedMan') {
-                this.text.text = "I am actively putting myself in hell everyday.\nfor what?";
-            } else if (thought.name == 'bulliedMan') {
-                this.text.text = "Please stop! What have I ever done to you!";
-            } else if (thought.name == 'gardener') {
-                this.text.text = "Happy thoughts.. Happy thoughts.. Happy thoughts..";
-            } else if (thought.name == 'suicidal') {
-                this.text.text = "I can't take this anymore! Everyday is the same..\nIt's hopeless";
-            } else if (thought.name == 'mayor') {
-                this.text.text = "I am failing you fathers.\nI can't be as good as you were";
-            } else if (thought.name == 'praying') {
-                this.text.text = "Dear God,\nyou are my only solace";
-            } else if (thought.name == 'death') {
-                this.text.text = "#*@#!#^&";
-            } else if (thought.name == 'lost love') {
-                this.text.text = "I hate this fountain!\nI hate everything that reminds me of you!";
-            } else if (thought.name == 'hole') {
-                this.text.text = "OH GOD WHAT IF NO ONE FINDS ME!!!";
-            }
+            this.text.text = thought.name;
             this.text.x = thought.x - 50;
             this.text.y = thought.y - 50;
             this.text.visible = true;
@@ -206,7 +187,7 @@ export default class GhostScene extends Phaser.Scene {
 
         this.ghost.setVelocity(0)
 
-
+        if (this.inControll){
         if (this.keyA.isDown) {
             this.ghost.setVelocityX(-this.speed);
             this.ghost.anims.play('left', true);
@@ -225,6 +206,7 @@ export default class GhostScene extends Phaser.Scene {
             this.ghost.setVelocityX(0);
             this.ghost.anims.play('turn');
         }
+    }
 
     }
 
