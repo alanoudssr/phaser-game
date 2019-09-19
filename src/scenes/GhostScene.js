@@ -59,11 +59,11 @@ export default class GhostScene extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
         const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
-       
+
         const particles = this.add.particles('blue');
         const emitterLeft = particles.createEmitter({
             speedX: { min: -10, max: 10 },
-            speedY: { min: -30, max: 10 }, 
+            speedY: { min: -30, max: 10 },
             scale: { start: 1, end: 0 },
             blendMode: 'ADD'
         })
@@ -96,7 +96,7 @@ export default class GhostScene extends Phaser.Scene {
         this.mayorMan = this.thoughts.create(mayor.x, mayor.y, 'thought');
         this.gardenerMan = this.thoughts.create(gardener.x, gardener.y, 'thought');
         this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
-     
+
         this.ghost.setCollideWorldBounds()
 
         this.bulliedMan.name = 'bulliedMan'
@@ -113,7 +113,7 @@ export default class GhostScene extends Phaser.Scene {
         camera.startFollow(this.ghost);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         emitterLeft.startFollow(this.ghost);
-        
+
         this.text = this.add.text(waitingMail.x - 25, waitingMail.y - 50, "Don't Touch Me")
         this.text.visible = false;
 
@@ -172,7 +172,13 @@ export default class GhostScene extends Phaser.Scene {
 
         this.anims.create({
             key: 'sparkle',
-            frames: this.anims.generateFrameNumbers('thought', { start: 0, end: 6 }),
+            frames: this.anims.generateFrameNumbers('thought', { start: 4, end: 5 }),
+            frameRate: 5,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'sparkle',
+            frames: this.anims.generateFrameNumbers('thought', { start: 4, end: 5 }),
             frameRate: 5,
             repeat: -1
         });
@@ -190,15 +196,16 @@ export default class GhostScene extends Phaser.Scene {
         boundsA.height += range;
         boundsA.x -= range / 2;
         boundsA.y -= range / 2;
- if (children.map(child=>{ boundsB = child.getBounds()
-        
-        if (Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB)) return true
-    }).includes(true)) return true
+        if (children.map(child => {
+            boundsB = child.getBounds()
+
+            if (Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB)) return true
+        }).includes(true)) return true
 
     }
 
     update() {
-        if (!this.checkOverlap(this.ghost, this.thoughts)){
+        if (!this.checkOverlap(this.ghost, this.thoughts)) {
             this.text.visible = false;
         }
         let { width, height } = this.sys.game.canvas;
