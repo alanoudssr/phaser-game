@@ -74,7 +74,7 @@ export default class MemoryScene extends Phaser.Scene {
         this.cloud10 = this.physics.add.sprite(500, 990, 'cloud');
         this.cloud11 = this.physics.add.sprite(800, 940, 'cloud');
         this.cloud12 = this.physics.add.sprite(1200, 990, 'cloud');
-        
+
 
         // this.anims.create({
         //     key: 'left',
