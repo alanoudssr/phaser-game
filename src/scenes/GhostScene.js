@@ -1,9 +1,11 @@
 import { CST } from "../CST";
 import Phaser from 'phaser';
-import dude from "../assets/dude.png";
+import dude from "../assets/Owlet.png";
+import sparkle from "../assets/sparkle.png";
 import thought from "../assets/thought.png";
 import leftMap from "../assets/maps/leftMap.json";
 import darkTileSet from "../assets/maps/tilesets/darkTileSet.png";
+import blue from "../assets/blue.png";
 import fontPng from "../assets/fonts/bitmap/chiller.png"
 import fontXml from "../assets/fonts/bitmap/chiller.xml"
 
@@ -33,8 +35,11 @@ export default class GhostScene extends Phaser.Scene {
     preload() {
         this.load.image("tilesG", darkTileSet);
         this.load.tilemapTiledJSON("mapG", leftMap);
+        this.load.spritesheet('ghost', dude, { frameWidth: 32, frameHeight: 30 });
+        this.load.spritesheet('sparkle', sparkle, { frameWidth: 32, frameHeight: 48 });
+        this.load.image("blue", blue);
         this.load.bitmapFont('desyrel', fontPng, fontXml);
-        this.load.spritesheet('ghost', dude, { frameWidth: 32, frameHeight: 48 });
+        this.load.spritesheet('ghost', dude, { frameWidth: 32, frameHeight: 30 });
         this.load.spritesheet('thought', thought, { frameWidth: 32, frameHeight: 48 });
     }
 
@@ -54,6 +59,15 @@ export default class GhostScene extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
         const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
+       
+        const particles = this.add.particles('blue');
+        const emitterLeft = particles.createEmitter({
+            speedX: { min: -10, max: 10 },
+            speedY: { min: -30, max: 10 }, 
+            scale: { start: 1, end: 0 },
+            blendMode: 'ADD'
+        })
+
         const waitingMail = map.findObject("Objects", obj => obj.name === "waiting for mail");
         const overworked = map.findObject("Objects", obj => obj.name === "overworked");
         const bullied = map.findObject("Objects", obj => obj.name === "Bullied");
@@ -82,7 +96,7 @@ export default class GhostScene extends Phaser.Scene {
         this.mayorMan = this.thoughts.create(mayor.x, mayor.y, 'thought');
         this.gardenerMan = this.thoughts.create(gardener.x, gardener.y, 'thought');
         this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
-
+     
         this.ghost.setCollideWorldBounds()
 
         this.bulliedMan.name = 'bulliedMan'
@@ -98,7 +112,8 @@ export default class GhostScene extends Phaser.Scene {
 
         camera.startFollow(this.ghost);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-
+        emitterLeft.startFollow(this.ghost);
+        
         this.text = this.add.text(waitingMail.x - 25, waitingMail.y - 50, "Don't Touch Me")
         this.text.visible = false;
 
@@ -137,21 +152,21 @@ export default class GhostScene extends Phaser.Scene {
 
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('ghost', { start: 0, end: 3 }),
-            frameRate: 5,
+            frames: this.anims.generateFrameNumbers('ghost', { start: 0, end: 6 }),
+            frameRate: 10,
             repeat: -1
         });
 
         this.anims.create({
             key: 'turn',
-            frames: [{ key: 'ghost', frame: 4 }],
+            frames: [{ key: 'ghost', frame: 7 }],
             frameRate: 20
         });
 
         this.anims.create({
             key: 'right',
-            frames: this.anims.generateFrameNumbers('ghost', { start: 5, end: 8 }),
-            frameRate: 5,
+            frames: this.anims.generateFrameNumbers('ghost', { start: 9, end: 16 }),
+            frameRate: 10,
             repeat: -1
         });
 
@@ -179,26 +194,7 @@ export default class GhostScene extends Phaser.Scene {
     }
 
     update() {
-        // if (!this.checkOverlap(this.ghost, this.thoughts)) {
-        //     this.text.visible = false;
-        // }
-        // else if (!this.checkOverlap(this.ghost, this.bulliedMan)) {
-        //     this.text.visible = false;
-        // } else if (!this.checkOverlap(this.ghost, this.overworkedMan)) {
-        //     this.text.visible = false;
-        // }
-        // if (this.checkOverlap(this.ghost, this.mailMan, 200)) {
-        //     this.mailMan.visible = true;
-        //     this.bulliedMan.visible = true;
-        //     this.overworkedMan.visible = true;
-        // } else {
-        //     this.bulliedMan.visible = false;
-        //     this.overworkedMan.visible = false;
-        //     this.mailMan.visible = false;
-
-        // }
-
-
+        
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(0, 0, width / 2, height);
 
@@ -223,6 +219,7 @@ export default class GhostScene extends Phaser.Scene {
             this.ghost.setVelocityX(0);
             this.ghost.anims.play('turn');
         }
+
     }
 
 }
