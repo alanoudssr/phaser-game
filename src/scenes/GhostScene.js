@@ -81,7 +81,7 @@ export default class GhostScene extends Phaser.Scene {
 
         this.sparkle.visible = false
         this.physics.add.overlap(this.ghost, this.sparkle, mailFun, null, this);
-        this.text = this.add.text(this.sparkle.x - 25, this.sparkle.y - 50, "Don't touch me")
+        this.text = this.add.text(this.sparkle.x - 35, this.sparkle.y - 50, "Don't touch me")
         this.text.visible = false;
 
         function mailFun() {
