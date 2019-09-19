@@ -82,7 +82,7 @@
              "orientation":"orthogonal",
              "width":16
             },
-         "image":"phaser-3-tilemap-blog-posts-master\/examples\/post-1\/assets\/tilesets\/tuxmon-sample-32px-extruded.png",
+         "image":"phaser3-project-template-master\/src\/assets\/maps\/tilesets\/tuxmon-sample-32px-extruded.png",
          "imageheight":1020,
          "imagewidth":816,
          "margin":1,
