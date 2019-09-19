@@ -1,6 +1,8 @@
 import { CST } from "../CST";
 import Phaser from 'phaser';
 import dude from "../assets/Owlet.png";
+import sparkle from "../assets/sparkle.png";
+import thought from "../assets/thought.png";
 import leftMap from "../assets/maps/leftMap.json";
 import darkTileSet from "../assets/maps/tilesets/darkTileSet.png";
 import blue from "../assets/blue.png";
@@ -19,9 +21,13 @@ export default class GhostScene extends Phaser.Scene {
         this.keyA;
         this.keyS;
         this.keyD;
-        this.t = 0;
-        this.path;
-        this.positionOnPath = this.positionOnPath.bind(this)
+        this.text;
+        this.thoughts;
+        this.fakeThoughts;
+        this.bulliedMan;
+        this.overworkedMan;
+        this.checkOverlap = this.checkOverlap.bind(this);
+        this.inControll = true;
     }
 
     init() {
@@ -31,15 +37,14 @@ export default class GhostScene extends Phaser.Scene {
         this.load.image("tilesG", darkTileSet);
         this.load.tilemapTiledJSON("mapG", leftMap);
         this.load.spritesheet('ghost', dude, { frameWidth: 32, frameHeight: 30 });
+        this.load.spritesheet('sparkle', sparkle, { frameWidth: 32, frameHeight: 48 });
         this.load.image("blue", blue);
         this.load.bitmapFont('desyrel', fontPng, fontXml);
-        this.load.spritesheet('mailMan', dude, { frameWidth: 32, frameHeight: 30 });
+        this.load.spritesheet('ghost', dude, { frameWidth: 32, frameHeight: 30 });
+        this.load.spritesheet('thought', thought, { frameWidth: 32, frameHeight: 48 });
     }
 
-    // create functions5
     create() {
-
-
 
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(0, 0, width / 2, height);
@@ -52,11 +57,10 @@ export default class GhostScene extends Phaser.Scene {
 
 
         const camera = this.cameras.main;
-
+        this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
         const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
-        const waitingMail = map.findObject("Objects", obj => obj.name === "waiting for mail");
-
+       
         const particles = this.add.particles('blue');
         const emitterLeft = particles.createEmitter({
             speedX: { min: -10, max: 10 },
@@ -65,49 +69,62 @@ export default class GhostScene extends Phaser.Scene {
             blendMode: 'ADD'
         })
 
+        const waitingMail = map.findObject("Objects", obj => obj.name === "waiting for mail");
+        const overworked = map.findObject("Objects", obj => obj.name === "overworked");
+        const bullied = map.findObject("Objects", obj => obj.name === "Bullied");
+        const praying = map.findObject("Objects", obj => obj.name === "praying");
+        const suicidal = map.findObject("Objects", obj => obj.name === "suicidal");
+        const death = map.findObject("Objects", obj => obj.name === "Dead Friend");
+        const lostLove = map.findObject("Objects", obj => obj.name === "Lost Love");
+        const hole = map.findObject("Objects", obj => obj.name === "Hole");
+        const mayor = map.findObject("Objects", obj => obj.name === "Crying Statue");
+        const gardener = map.findObject("Objects", obj => obj.name === "Gardening");
+
+        this.thoughts = this.physics.add.group();
+        this.fakeThoughts = this.physics.add.group();
+
+       this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 20, y: 50, stepX: 250, stepY: 150 } })
+       this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 1000, y: 1000, stepX: -250, stepY: -150 } })
+
+        this.mailMan = this.thoughts.create(waitingMail.x, waitingMail.y, 'thought')
+        this.overworkedMan = this.thoughts.create(overworked.x, overworked.y, 'thought')
+        this.bulliedMan = this.thoughts.create(bullied.x, bullied.y, 'thought');
+        this.prayingMan = this.thoughts.create(praying.x, praying.y, 'thought');
+        this.suicidalMan = this.thoughts.create(suicidal.x, suicidal.y, 'thought');
+        this.deathMan = this.thoughts.create(death.x, death.y, 'thought');
+        this.lostLove = this.thoughts.create(lostLove.x, lostLove.y, 'thought');
+        this.holeMan = this.thoughts.create(hole.x, hole.y, 'thought');
+        this.mayorMan = this.thoughts.create(mayor.x, mayor.y, 'thought');
+        this.gardenerMan = this.thoughts.create(gardener.x, gardener.y, 'thought');
         this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
-        this.mailMan = this.physics.add.sprite(300, 850, 'mailMan');
+     
+        this.ghost.setCollideWorldBounds()
+
+        this.bulliedMan.name = "Please stop! What have I ever done to you!"
+        this.overworkedMan.name = "I am actively putting myself in hell everyday.\nfor what?"   
+        this.mailMan.name = 'Waiting.. waiting for you..'
+        this.prayingMan.name = "Dear God,\nyou are my only solace";
+        this.suicidalMan.name = "I can't take this anymore! Everyday is the same..\nIt's hopeless";
+        this.deathMan.name = "why.."
+        this.lostLove.name = "I hate this fountain!\nI hate everything that reminds me of you!";
+        this.holeMan.name = "OH GOD WHAT IF NO ONE FINDS ME!!!";
+        this.mayorMan.name = "I am failing you fathers.\nI can't be as good as you were";
+        this.gardenerMan.name = "Happy thoughts.. Happy thoughts.. Happy thoughts.."
 
         camera.startFollow(this.ghost);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-        
- 
         emitterLeft.startFollow(this.ghost);
+        
+        this.text = this.add.text(waitingMail.x - 25, waitingMail.y - 50, "Don't Touch Me")
+        this.text.visible = false;
 
+        this.physics.add.overlap(this.ghost, this.thoughts, (player, thought) => {
+            this.text.text = thought.name;
+            this.text.x = thought.x - 50;
+            this.text.y = thought.y - 50;
+            this.text.visible = true;
+        }, null, this);
 
-
-        this.physics.add.overlap(this.ghost, this.mailMan, mailFun, null, this);
-
-        function mailFun() {
-            if (!this.overlapTriggered) {
-
-                /// text
-                this.path = new Phaser.Curves.Path(this.mailMan.x + 100 , this.mailMan.y);
-
-                this.path.circleTo(100);
-                // this.path.splineTo([waitingMail.x, waitingMail.y, waitingMail.x, waitingMail.y + 30, waitingMail.x, waitingMail.y + 40, waitingMail.x, waitingMail.y + 50, waitingMail.x, waitingMail.y + 100]);
-                // this.path.ellipseTo(waitingMail.x, waitingMail.y);
-                // this.path.ellipseTo(waitingMail.x, waitingMail.y);
-
-                var text = this.add.dynamicBitmapText(waitingMail.x, waitingMail.y, 'desyrel', 'Waiting for help', 50);
-
-                text.setDisplayCallback(this.positionOnPath);
-
-                var graphics = this.add.graphics();
-
-                graphics.lineStyle(1, 0xffffff, 1);
-
-                this.path.draw(graphics, 28);
-
-
-                this.overlapTriggered = true
-                console.log('hi');
-
-                setTimeout(() => {
-                    this.overlapTriggered = false
-                }, 200);
-            }
-        }
 
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -134,29 +151,43 @@ export default class GhostScene extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'sparkle',
+            frames: this.anims.generateFrameNumbers('thought', { start: 0, end: 6 }),
+            frameRate: 5,
+            repeat: -1
+        });
 
 
+        this.thoughts.playAnimation('sparkle', true)
+        this.fakeThoughts.playAnimation('sparkle', true)
 
+    }
+    checkOverlap(spriteA, spriteB, range = 100) {
+        var children = spriteB.getChildren()
+        var boundsB;
+        var boundsA = spriteA.getBounds();
+        boundsA.width += range;
+        boundsA.height += range;
+        boundsA.x -= range / 2;
+        boundsA.y -= range / 2;
+ if (children.map(child=>{ boundsB = child.getBounds()
+        
+        if (Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB)) return true
+    }).includes(true)) return true
 
     }
 
-    // update functions 
     update() {
-
-        //
-        this.t += 0.001;
-
-        if (this.t >= (1 - 0.24)) {
-            this.t = 0;
+        if (!this.checkOverlap(this.ghost, this.thoughts)){
+            this.text.visible = false;
         }
-        //
-
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(0, 0, width / 2, height);
 
         this.ghost.setVelocity(0)
 
-
+        if (this.inControll){
         if (this.keyA.isDown) {
             this.ghost.setVelocityX(-this.speed);
             this.ghost.anims.play('left', true);
@@ -175,16 +206,8 @@ export default class GhostScene extends Phaser.Scene {
             this.ghost.setVelocityX(0);
             this.ghost.anims.play('turn');
         }
+    }
 
     }
-    positionOnPath(data) {
-        var pathVector = this.path.getPoint(this.t + ((6 - data.index) * 0.03));
 
-        if (pathVector) {
-            data.x = pathVector.x;
-            data.y = pathVector.y;
-        }
-
-        return data;
-    }
 }
