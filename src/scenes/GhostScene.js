@@ -183,18 +183,24 @@ export default class GhostScene extends Phaser.Scene {
 
     }
     checkOverlap(spriteA, spriteB, range = 100) {
-
+        var children = spriteB.getChildren()
+        var boundsB;
         var boundsA = spriteA.getBounds();
-        var boundsB = spriteB.getBounds();
-        boundsB.width += range;
-        boundsB.height += range;
-        boundsB.x -= range / 2;
-        boundsB.y -= range / 2;
-        return Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB);
+        boundsA.width += range;
+        boundsA.height += range;
+        boundsA.x -= range / 2;
+        boundsA.y -= range / 2;
+ if (children.map(child=>{ boundsB = child.getBounds()
+        
+        if (Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB)) return true
+    }).includes(true)) return true
+
     }
 
     update() {
-        
+        if (!this.checkOverlap(this.ghost, this.thoughts)){
+            this.text.visible = false;
+        }
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(0, 0, width / 2, height);
 
