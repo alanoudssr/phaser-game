@@ -9,6 +9,7 @@ import blue from "../assets/blue.png";
 import fontPng from "../assets/fonts/bitmap/chiller.png"
 import fontXml from "../assets/fonts/bitmap/chiller.xml"
 
+
 export default class GhostScene extends Phaser.Scene {
     constructor(config) {
         super({
@@ -28,11 +29,16 @@ export default class GhostScene extends Phaser.Scene {
         this.bulliedMan;
         this.overworkedMan;
         this.checkOverlap = this.checkOverlap.bind(this);
-        this.inControll = true;
+        this.inControl = true;
     }
 
     init(data) {
-        this.emitter = data
+        this.keyW = data.keyW;
+        this.keyA = data.keyA;
+        this.keyS = data.keyS;
+        this.keyD = data.keyD;
+        this.emitter = data.emitter
+
     }
     preload() {
         this.load.image("tilesG", darkTileSet);
@@ -46,6 +52,9 @@ export default class GhostScene extends Phaser.Scene {
     }
 
     create() {
+
+
+        console.log('Player controls from the ghost scene', this.registry.get('playerControls'))
 
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(0, 0, width / 2, height);
@@ -98,16 +107,14 @@ export default class GhostScene extends Phaser.Scene {
         this.holeMan = this.thoughts.create(hole.x, hole.y, 'thought');
         this.mayorMan = this.thoughts.create(mayor.x, mayor.y, 'thought');
         this.gardenerMan = this.thoughts.create(gardener.x, gardener.y, 'thought');
-        this.fountain = this.physics.add.sprite(fountain.x, fountain.y, 'ghost');
+        this.fountain = this.physics.add.sprite(fountain.x, fountain.y, 'thought');
         this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
 
-        const sequence = ['fountain'];
+        const sequence = ['fountain',];
         //
-        this.physics.add.overlap(this.ghost, this.fountain, () => {
-            this.emitter.emit('fountain')
-        }, null, this)
-        this.physics.add.overlap(this.ghost, this.prayingMan, () => {
-            this.emitter.emit('prayer')
+        this.physics.add.overlap(this.ghost, this.fountain, (thought) => {
+
+            this.emitter.emit('fountain', thought)
         }, null, this)
         // //
 
@@ -136,13 +143,13 @@ export default class GhostScene extends Phaser.Scene {
             this.text.x = thought.x - 50;
             this.text.y = thought.y - 50;
             this.text.visible = true;
+            // this.registry.set('ghostControls', false);
+            // this.inControl = this.registry.get('ghostControls')
+            // this.registry.set('playerControls', true);
+            // this.ghost.visible = false
+            // emitterLeft.visible = false
+
         }, null, this);
-
-
-        this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-        this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-        this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
         this.anims.create({
             key: 'left',
@@ -207,7 +214,7 @@ export default class GhostScene extends Phaser.Scene {
 
         this.ghost.setVelocity(0)
 
-        if (this.inControll) {
+        if (this.inControl) {
             if (this.keyA.isDown) {
                 this.ghost.setVelocityX(-this.speed);
                 this.ghost.anims.play('left', true);

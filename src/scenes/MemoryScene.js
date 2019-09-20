@@ -16,6 +16,8 @@ import depressed from "../assets/depressed.png";
 import bullied from "../assets/bullied.png";
 import bully1 from "../assets/bully1.png";
 import bully2 from "../assets/bully2.png";
+import blue from "../assets/blue.png";
+
 
 export default class MemoryScene extends Phaser.Scene {
     constructor() {
@@ -26,12 +28,20 @@ export default class MemoryScene extends Phaser.Scene {
         this.playerRight;
         this.cursors;
         this.controls;
+        this.inControl = false
+        this.speed = 160;
         this.emitter;
-
+        this.emitterRight;
+        this.clouds;
     }
 
     init(data) {
-        this.emitter = data
+        this.emitter = data.emitter
+        this.keyW = data.keyW;
+        this.keyA = data.keyA;
+        this.keyS = data.keyS;
+        this.keyD = data.keyD;
+
     }
     preload() {
         this.load.image("tiles", rightTileSet);
@@ -50,10 +60,16 @@ export default class MemoryScene extends Phaser.Scene {
         this.load.image("bullied", bullied);
         this.load.image("bully1", bully1);
         this.load.image("bully2", bully2);
+        this.load.image("blue", blue);
+
     }
 
     // create functions
     create() {
+
+
+
+
         //Set the Viewport size for the scene
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(width / 2, 0, width, height);
@@ -71,6 +87,7 @@ export default class MemoryScene extends Phaser.Scene {
 
         // Phaser supports multiple cameras, but you can access the default camera like this:
         const camera = this.cameras.main;
+        this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
         // Set up the arrows to control the camera
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -85,8 +102,14 @@ export default class MemoryScene extends Phaser.Scene {
 
         // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
         camera.setBounds(0, 0, map.widthInPixels + (width / 2), map.heightInPixels);
+        const particlesRight = this.add.particles('blue');
+        this.emitterRight = particlesRight.createEmitter({
+            speedX: { min: -10, max: 10 },
+            speedY: { min: -30, max: 10 },
+            scale: { start: 1, end: 0 },
+            blendMode: 'ADD'
+        })
 
-        this.playerRight = this.physics.add.sprite(130, 450, 'dude');
         this.suicidalDude = this.physics.add.sprite(830, 40, 'depressed');
         this.overworkedDude = this.physics.add.sprite(200, 130, 'overworked');
         this.mayorDude = this.physics.add.sprite(1100, 290, 'mayor');
@@ -98,33 +121,94 @@ export default class MemoryScene extends Phaser.Scene {
         this.secondBullyDude = this.physics.add.sprite(850, 1065, 'bully2');
         this.mailDude = this.physics.add.sprite(90, 840, 'mailman');
         this.deadDude = this.physics.add.sprite(640, 850, 'oldMan');
-        this.overworkedCloud = this.physics.add.sprite(100, 100, 'cloud');
-        this.cloud = this.physics.add.sprite(540, 10, 'smallCloud');
-        this.suicidalCloud = this.physics.add.sprite(800, 100, 'cloud');
-        this.mayorCloud = this.physics.add.sprite(1200, 150, 'cloud');
-        this.mailCloud = this.physics.add.sprite(100, 600, 'cloud');
-        this.gardenerCloud = this.physics.add.sprite(500, 500, 'cloud');
-        this.cloud = this.physics.add.sprite(800, 500, 'cloud');
-        this.lostLoveCloud = this.physics.add.sprite(1050, 680, 'cloud');
-        this.holeCloud = this.physics.add.sprite(100, 940, 'cloud');
-        this.cloud10 = this.physics.add.sprite(500, 990, 'cloud');
-        this.bulliedCloud = this.physics.add.sprite(800, 940, 'cloud');
-        this.prayingCloud = this.physics.add.sprite(1100, 1200, 'cloud');
+        this.playerRight = this.physics.add.sprite(130, 450, 'dude');
 
-        this.emitter.on('fountain', () => {
-            this.lostLoveCloud.visible = false
+        this.clouds = this.physics.add.group();
+
+        this.overworkedCloud = this.clouds.create(100, 100, 'cloud');
+        this.cloud = this.clouds.create(540, 10, 'smallCloud');
+        this.suicidalCloud = this.clouds.create(800, 100, 'cloud');
+        this.mayorCloud = this.clouds.create(1200, 150, 'cloud');
+        this.mailCloud = this.clouds.create(100, 600, 'cloud');
+        this.gardenerCloud = this.clouds.create(500, 500, 'cloud');
+        this.cloud = this.clouds.create(800, 500, 'cloud');
+        this.lostLoveCloud = this.clouds.create(1050, 680, 'cloud');
+        this.holeCloud = this.clouds.create(100, 940, 'cloud');
+        this.cloud10 = this.clouds.create(500, 990, 'cloud');
+        this.bulliedCloud = this.clouds.create(800, 940, 'cloud');
+        this.prayingCloud = this.clouds.create(1100, 1200, 'cloud');
+
+        this.emitter.on('fountain', (data) => {
+            console.log(data);
+
+            this.clouds.getChildren().forEach(child => { child.visible = false })
         }, this)
-        this.emitter.on('prayer', () => {
-            this.prayingCloud.visible = false
-        }, this)
+
+        // this.playerRight.setCollideWorldBounds()
+        worldLayer.setCollisionByProperty({ collides: true });
+        this.physics.add.collider(this.playerRight, worldLayer);
+
+
+        this.emitterRight.startFollow(this.playerRight);
+
+        this.anims.create({
+            key: 'leftP',
+            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'turnP',
+            frames: [{ key: 'dude', frame: 4 }],
+            frameRate: 20
+        });
+
+        this.anims.create({
+            key: 'rightP',
+            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+            frameRate: 5,
+            repeat: -1
+        });
+        this.emitterRight.visible = false
 
     }
 
     // update functions 
     update(time, delta) {
+
+        this.inControl = this.registry.get('playerControls')
+
+
         // Resize The Viewport for the Scene
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(width / 2, 0, width, height);
+
+        this.playerRight.setVelocity(0)
+
+        if (this.inControl) {
+            this.emitterRight.visible = true
+            if (this.keyA.isDown) {
+                this.playerRight.setVelocityX(-this.speed);
+                this.playerRight.anims.play('leftP', true);
+            }
+            else if (this.keyD.isDown) {
+                this.playerRight.setVelocityX(this.speed);
+                this.playerRight.anims.play('rightP', true);
+            }
+            else if (this.keyW.isDown) {
+                this.playerRight.setVelocityY(-this.speed);
+            }
+            else if (this.keyS.isDown) {
+                this.playerRight.setVelocityY(this.speed);
+            }
+            else {
+                this.playerRight.setVelocityX(0);
+                this.playerRight.anims.play('turnP');
+            }
+        }
+
+
 
         this.controls.update(delta);
 
