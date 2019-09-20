@@ -22,6 +22,7 @@ export default class GhostScene extends Phaser.Scene {
         this.keyA;
         this.keyS;
         this.keyD;
+        this.keyX;
         this.text;
         this.thoughts;
         this.fakeThoughts;
@@ -37,6 +38,7 @@ export default class GhostScene extends Phaser.Scene {
         this.keyA = data.keyA;
         this.keyS = data.keyS;
         this.keyD = data.keyD;
+        this.keyX = data.keyX;
         this.emitter = data.emitter
 
     }
@@ -172,7 +174,16 @@ export default class GhostScene extends Phaser.Scene {
                 thought.id = false
             }
 
+            if(this.keyX.isDown && thought.name == "why.."){
+            this.registry.set('ghostControls', false);
+            this.registry.set('playerControls', true);
+            this.ghost.visible = false
+            emitterLeft.visible = false
+            }
+
         }, null, this);
+
+    
 
         this.anims.create({
             key: 'left',
@@ -245,7 +256,7 @@ export default class GhostScene extends Phaser.Scene {
 
         this.ghost.setVelocity(0)
 
-        if (this.inControl) {
+        if (this.registry.get('ghostControls')) {
             if (this.keyA.isDown) {
                 this.ghost.setVelocityX(-this.speed);
                 this.ghost.anims.play('left', true);

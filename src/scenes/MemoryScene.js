@@ -55,6 +55,19 @@ export default class MemoryScene extends Phaser.Scene {
         this.emitterRight;
         this.clouds;
         this.counter = 0;
+        this.possessedNPC;
+        this.NPCs;
+        this.keyW;
+        this.keyA;
+        this.keyS;
+        this.keyD;
+        this.keyX;
+        this.keyH;
+        this.worldLayer;
+        this.gameOver = false;
+        this.isPossessed = false;
+        this.clouds;
+
     }
 
     init(data) {
@@ -62,6 +75,8 @@ export default class MemoryScene extends Phaser.Scene {
         this.keyW = data.keyW;
         this.keyA = data.keyA;
         this.keyS = data.keyS;
+        this.keyX = data.keyX;
+        this.keyH = data.keyH;
         this.keyD = data.keyD;
 
     }
@@ -120,7 +135,7 @@ export default class MemoryScene extends Phaser.Scene {
         const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
 
         const belowLayer = map.createStaticLayer("Below Player", tileset, 0, 0);
-        const worldLayer = map.createStaticLayer("World", tileset, 0, 0);
+        this.worldLayer = map.createStaticLayer("World", tileset, 0, 0);
         const aboveLayer = map.createStaticLayer("Above Player", tileset, 0, 0);
 
         const camera = this.cameras.main;
@@ -139,13 +154,31 @@ export default class MemoryScene extends Phaser.Scene {
 
         // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
         camera.setBounds(0, 0, map.widthInPixels + (width / 2), map.heightInPixels);
-        const particlesRight = this.add.particles('blue');
-        this.emitterRight = particlesRight.createEmitter({
-            speedX: { min: -10, max: 10 },
-            speedY: { min: -30, max: 10 },
-            scale: { start: 1, end: 0 },
-            blendMode: 'ADD'
-        })
+
+
+
+
+        // this.anims.create({
+        //     key: 'leftP',
+        //     frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        //     frameRate: 5,
+        //     repeat: -1
+        // });
+
+        // this.anims.create({
+        //     key: 'turnP',
+        //     frames: [{ key: 'dude', frame: 4 }],
+        //     frameRate: 20
+        // });
+
+        // this.anims.create({
+        //     key: 'rightP',
+        //     frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        //     frameRate: 5,
+        //     repeat: -1
+        // });
+
+
 
         this.anims.create({
             key: 'bully2-idle',
@@ -289,39 +322,82 @@ export default class MemoryScene extends Phaser.Scene {
         });
 
 
-        // update functions 
-        this.playerRight = this.physics.add.sprite(130, 450, 'dude');
-        this.suicidalDude = this.physics.add.sprite(830, 40, 'depressed').play('depressed-idle');
-        this.overworkedDude = this.physics.add.sprite(200, 130, 'overworked').play('overworked-idle');
-        this.anger = this.physics.add.sprite(200, 95, 'anger').play('anger-idle');
-        this.mayorDude = this.physics.add.sprite(1100, 290, 'mayor').play('mayor-idle');
-        this.prayingDude = this.physics.add.sprite(1170, 1225, 'praying1').play('praying-idle');
-        this.lostLoveDude = this.physics.add.sprite(1020, 720, 'lover').play('lover-idle');
-        this.heartbreak = this.physics.add.sprite(1020, 680, 'heartbreak').play('heartbreak-idle');
-        this.gardenerDude = this.physics.add.sprite(420, 500, 'girl').play('girl-idle');
-        this.bulliedDude = this.physics.add.sprite(900, 1100, 'bullied');
-        this.firstBullyDude = this.physics.add.sprite(870, 1050, 'bully1a').play('bully1-idle');
-        this.secondBullyDude = this.add.sprite(850, 1065, 'bully2a').play('bully2-idle');
-        this.mailDude = this.physics.add.sprite(90, 840, 'mailman1').play('mailman-idle');
-        this.holeDude = this.physics.add.sprite(125, 1120, 'oldMan');
-        this.deadDude = this.physics.add.sprite(620, 830, 'deadDude');
-        this.why = this.physics.add.sprite(620, 790, 'why').play('why-idle');
+        this.NPCs = this.physics.add.group();
+
+
+
+
+        this.suicidalDude = this.NPCs.create(830, 40, 'depressed').play('depressed-idle');
+        this.suicidalDudePresence = this.physics.add.sprite(830, 320, 'depressed')
+        this.suicidalDudePresence.visible = false
+        this.overworkedDude = this.NPCs.create(200, 130, 'overworked').play('overworked-idle');
+        this.anger = this.add.sprite(200, 95, 'anger').play('anger-idle');
+        this.mayorDude = this.NPCs.create(1100, 290, 'mayor').play('mayor-idle');
+        this.prayingDude = this.NPCs.create(1170, 1225, 'praying1').play('praying-idle');
+        this.lostLoveDude = this.NPCs.create(1020, 720, 'lover').play('lover-idle');
+        this.heartbreak = this.add.sprite(1020, 680, 'heartbreak').play('heartbreak-idle');
+        this.gardenerDude = this.NPCs.create(420, 500, 'girl').play('girl-idle');
+        this.bulliedDude = this.NPCs.create(900, 1100, 'bullied');
+        this.firstBullyDude = this.NPCs.create(870, 1050, 'bully1a').play('bully1-idle');
+        this.secondBullyDude = this.NPCs.create(850, 1065, 'bully2a').play('bully2-idle');
+        this.mailDude = this.NPCs.create(90, 840, 'mailman1').play('mailman-idle');
+        this.holeDude = this.NPCs.create(125, 1120, 'oldMan');
+        this.deadDude = this.NPCs.create(620, 830, 'deadDude');
+        this.why = this.add.sprite(620, 790, 'why').play('why-idle');
+
+        this.playerRight = this.NPCs.create(130, 450, 'dude');
+        this.possessedNPC = this.playerRight;
+        this.worldLayer.setCollisionByProperty({ collides: true });
+        this.physics.add.collider(this.possessedNPC, this.worldLayer);
+        this.possessedNPC.setCollideWorldBounds()
+        // camera.startFollow(this.playerRight)
+        // camera.setBounds(0, 0, rightMap.widthInPixels, rightMap.heightInPixels);
+
+        const particlesRight = this.add.particles('blue');
+        this.emitterRight = particlesRight.createEmitter({
+            speedX: { min: -10, max: 10 },
+            speedY: { min: -30, max: 10 },
+            scale: { start: 1, end: 0 },
+            blendMode: 'ADD'
+        })
+
+        this.emitterRight.startFollow(this.possessedNPC);
+        this.emitterRight.visible = false
+
+
+        this.physics.add.overlap(this.possessedNPC, this.NPCs, (possessed, next) => {
+
+            if (this.keyX.isDown) {
+                this.isPossessed = true
+
+                this.possessedNPC = next;
+                this.emitterRight.startFollow(this.possessedNPC);
+                this.physics.add.collider(this.possessedNPC, this.worldLayer);
+                this.possessedNPC.setCollideWorldBounds()
+            }
+
+
+
+        });
+
+
 
 
         this.clouds = this.physics.add.group();
 
-        this.overworkedCloud = this.clouds.create(100, 100, 'cloud');
-        this.cloud = this.clouds.create(540, 10, 'smallCloud');
-        this.suicidalCloud = this.clouds.create(800, 100, 'cloud');
-        this.mayorCloud = this.clouds.create(1200, 150, 'cloud');
-        this.mailCloud = this.clouds.create(100, 600, 'cloud');
-        this.gardenerCloud = this.clouds.create(500, 500, 'cloud');
-        this.cloud = this.clouds.create(800, 500, 'cloud');
-        this.lostLoveCloud = this.clouds.create(1050, 680, 'cloud');
-        this.holeCloud = this.clouds.create(100, 940, 'cloud');
-        this.cloud10 = this.clouds.create(500, 990, 'cloud');
-        this.bulliedCloud = this.clouds.create(800, 940, 'cloud');
-        this.prayingCloud = this.clouds.create(1100, 1200, 'cloud');
+        //     this.overworkedCloud = this.clouds.create(100, 100, 'cloud');
+        //     this.cloud = this.clouds.create(540, 10, 'smallCloud');
+        //     this.suicidalCloud = this.clouds.create(800, 100, 'cloud');
+        //     this.mayorCloud = this.clouds.create(1200, 150, 'cloud');
+        //     this.mailCloud = this.clouds.create(100, 600, 'cloud');
+        //     this.gardenerCloud = this.clouds.create(500, 500, 'cloud');
+        //     this.cloud = this.clouds.create(800, 500, 'cloud');
+        //     this.lostLoveCloud = this.clouds.create(1050, 680, 'cloud');
+        //     this.holeCloud = this.clouds.create(100, 940, 'cloud');
+        //     this.cloud10 = this.clouds.create(500, 990, 'cloud');
+        //     this.bulliedCloud = this.clouds.create(800, 940, 'cloud');
+        //     this.prayingCloud = this.clouds.create(1100, 1200, 'cloud');
+
 
 
         this.emitter.on('clearCloud', () => {
@@ -330,66 +406,69 @@ export default class MemoryScene extends Phaser.Scene {
                 this.counter++;
             }
         }, this)
-
-        worldLayer.setCollisionByProperty({ collides: true });
-        this.physics.add.collider(this.playerRight, worldLayer);
-
-
-        this.emitterRight.startFollow(this.playerRight);
-
-
-        this.anims.create({
-            key: 'leftP',
-            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-            frameRate: 5,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'turnP',
-            frames: [{ key: 'dude', frame: 4 }],
-            frameRate: 20
-        });
-
-        this.anims.create({
-            key: 'rightP',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-            frameRate: 5,
-            repeat: -1
-        });
-        this.emitterRight.visible = false
     }
-
+    // update functions 
     update(time, delta) {
 
-        this.inControl = this.registry.get('playerControls')
+        this.physics.add.overlap(this.possessedNPC, this.suicidalDudePresence, (possessed, sui) => {
+
+            if (this.keyH.isDown && !this.gameOver && possessed.texture.key == 'deadDude') {
+
+                this.scene.stop(CST.SCENES.MEMORY);
+                this.scene.stop(CST.SCENES.GHOST);
+                this.scene.start(CST.SCENES.FINAL);
+                this.gameOver = true
+            }
+
+
+        });
+
+
+        this.physics.add.overlap(this.possessedNPC, this.NPCs, (possessed, next) => {
+
+            if (this.keyX.isDown && !this.isPossessed) {
+                this.possessedNPC = next;
+                this.emitterRight.startFollow(this.possessedNPC);
+                this.physics.add.collider(this.possessedNPC, this.worldLayer);
+                this.isPossessed = true
+
+            }
+
+
+        });
+
+        this.isPossessed = false
+
+
+
+        // this.inControl = this.registry.get('playerControls')
 
 
         // Resize The Viewport for the Scene
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(width / 2, 0, width, height);
 
-        this.playerRight.setVelocity(0)
+        this.possessedNPC.setVelocity(0)
 
-        if (this.inControl) {
+        if (this.registry.get('playerControls')) {
             this.emitterRight.visible = true
             if (this.keyA.isDown) {
-                this.playerRight.setVelocityX(-this.speed);
-                this.playerRight.anims.play('leftP', true);
+                this.possessedNPC.setVelocityX(-this.speed);
+                // this.possessedNPC.anims.play('leftP', true);
             }
             else if (this.keyD.isDown) {
-                this.playerRight.setVelocityX(this.speed);
-                this.playerRight.anims.play('rightP', true);
+                this.possessedNPC.setVelocityX(this.speed);
+                // this.possessedNPC.anims.play('rightP', true);
             }
             else if (this.keyW.isDown) {
-                this.playerRight.setVelocityY(-this.speed);
+                this.possessedNPC.setVelocityY(-this.speed);
             }
             else if (this.keyS.isDown) {
-                this.playerRight.setVelocityY(this.speed);
+                this.possessedNPC.setVelocityY(this.speed);
             }
             else {
-                this.playerRight.setVelocityX(0);
-                this.playerRight.anims.play('turnP');
+                this.possessedNPC.setVelocityX(0);
+                // this.possessedNPC.anims.play('turnP');
             }
         }
 

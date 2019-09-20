@@ -6,7 +6,7 @@ export default class StartScene extends Phaser.Scene {
         super({
             key: CST.SCENES.START,
         });
-        this.timer = 13
+        this.timer = 1
     }
 
     init() { }
