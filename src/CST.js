@@ -3,6 +3,7 @@ export const CST = {
         START: "START",
         GAME: "GAME",
         MEMORY: "MEMORY",
-        GHOST: "GHOST"
+        GHOST: "GHOST",
+        FINAL: "FINAL"
     }
 }
