@@ -96,7 +96,7 @@ export default class MemoryScene extends Phaser.Scene {
         this.firstBullyDude = this.physics.add.sprite(870, 1050, 'bully1');
         this.secondBullyDude = this.physics.add.sprite(850, 1065, 'bully2');
         this.mailDude = this.physics.add.sprite(90, 840, 'mailman');
-        this.deadDude = this.physics.add.sprite(640, 850, 'oldMan');
+        this.holeDude = this.physics.add.sprite(140, 1120, 'oldMan');
         // this.overworkedCloud = this.physics.add.sprite(100, 100, 'cloud');
         // this.cloud = this.physics.add.sprite(540, 10, 'smallCloud');
         // this.suicidalCloud = this.physics.add.sprite(800, 100, 'cloud');
