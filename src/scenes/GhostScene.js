@@ -9,6 +9,7 @@ import blue from "../assets/blue.png";
 import fontPng from "../assets/fonts/bitmap/chiller.png"
 import fontXml from "../assets/fonts/bitmap/chiller.xml"
 
+
 export default class GhostScene extends Phaser.Scene {
     constructor(config) {
         super({
@@ -30,7 +31,11 @@ export default class GhostScene extends Phaser.Scene {
         this.inControll = true;
     }
 
-    init() {
+    init(data) {
+        this.keyW =  data.keyW ;
+        this.keyA =  data.keyA ;
+        this.keyS =  data.keyS ;
+        this.keyD =  data.keyD;
 
     }
     preload() {
@@ -124,12 +129,6 @@ export default class GhostScene extends Phaser.Scene {
             this.text.y = thought.y - 50;
             this.text.visible = true;
         }, null, this);
-
-
-        this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-        this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-        this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
         this.anims.create({
             key: 'left',
