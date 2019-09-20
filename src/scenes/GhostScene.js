@@ -121,12 +121,12 @@ export default class GhostScene extends Phaser.Scene {
         this.bulliedMan.name = "Please stop! What have I ever done to you!"
         this.overworkedMan.name = "I am actively putting myself in hell everyday.\nfor what?"
         this.mailMan.name = 'Waiting.. waiting for you..'
-        this.prayingMan.name = "Dear God,\nyou are my only solace";
-        this.suicidalMan.name = "I can't take this anymore! Everyday is the same..\nIt's hopeless";
+        this.prayingMan.name = "Dear God,\nyou are my \nonly solace";
+        this.suicidalMan.name = "I can't take this anymore! \nEveryday is the same..\nIt's hopeless";
         this.deathMan.name = "why.."
-        this.lostLove.name = "I hate this fountain!\nI hate everything that reminds me of you!";
+        this.lostLove.name = "I hate this fountain!\n I hate everything that \nreminds me of you!";
         this.holeMan.name = "OH GOD WHAT IF NO ONE FINDS ME!!!";
-        this.mayorMan.name = "I am failing you fathers.\nI can't be as good as you were";
+        this.mayorMan.name = "I am failing you\n fathers.\nI can't be as good\n as you were";
         this.gardenerMan.name = "Happy thoughts.. Happy thoughts.. Happy thoughts.."
 
         camera.startFollow(this.ghost);
