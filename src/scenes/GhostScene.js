@@ -80,6 +80,18 @@ export default class GhostScene extends Phaser.Scene {
         const hole = map.findObject("Objects", obj => obj.name === "Hole");
         const mayor = map.findObject("Objects", obj => obj.name === "Crying Statue");
         const gardener = map.findObject("Objects", obj => obj.name === "Gardening");
+        var ghostText = 
+        [
+            "Find me... Hear his thought... ",
+            "",
+            "I'm counting on you...",
+            "Hurry!!"
+        ];
+        
+
+        this.add.text(200, 50, ghostText, { fontFamily: 'Tohama', fontSize: 28, color: 'white', lineSpacing: 30 });
+        this.add.text(950, 50, '(x marks the spot)', { fontFamily: 'Tohama', fontSize: 22, color: 'white', lineSpacing: 30 });
+
 
         this.thoughts = this.physics.add.group();
         this.fakeThoughts = this.physics.add.group();
