@@ -27,8 +27,9 @@ export default class GameScene extends Phaser.Scene {
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-        this.registry.set('ghostControlls', true)
-        this.registry.set('playerControlls', false)
+        
+        this.registry.set('ghostControls', true)
+        this.registry.set('playerControls', false)
 
 
         this.scene.launch(CST.SCENES.START);

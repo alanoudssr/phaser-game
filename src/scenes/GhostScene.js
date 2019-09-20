@@ -8,7 +8,6 @@ import darkTileSet from "../assets/maps/tilesets/darkTileSet.png";
 import blue from "../assets/blue.png";
 import fontPng from "../assets/fonts/bitmap/chiller.png"
 import fontXml from "../assets/fonts/bitmap/chiller.xml"
-import { log } from "util";
 
 
 export default class GhostScene extends Phaser.Scene {
@@ -114,7 +113,7 @@ export default class GhostScene extends Phaser.Scene {
         this.mailMan.name = 'Waiting.. waiting for you..'
         this.prayingMan.name = "Dear God,\nyou are my only solace";
         this.suicidalMan.name = "I can't take this anymore! Everyday is the same..\nIt's hopeless";
-        this.deathMan.name = "why.."
+        this.deathMan.name = "why..i don't understand"
         this.lostLove.name = "I hate this fountain!\nI hate everything that reminds me of you!";
         this.holeMan.name = "OH GOD WHAT IF NO ONE FINDS ME!!!";
         this.mayorMan.name = "I am failing you fathers.\nI can't be as good as you were";
@@ -134,10 +133,9 @@ export default class GhostScene extends Phaser.Scene {
             this.text.visible = true;
 
             this.registry.set('ghostControls' , false);
-            this.inControl = this.registry.get('ghostControls')
             this.registry.set('playerControls' , true);
 
-
+            
         }, null, this);
 
         this.anims.create({
@@ -167,7 +165,6 @@ export default class GhostScene extends Phaser.Scene {
             repeat: -1
         });
 
-
         this.thoughts.playAnimation('sparkle', true)
         this.fakeThoughts.playAnimation('sparkle', true)
 
@@ -188,6 +185,11 @@ export default class GhostScene extends Phaser.Scene {
     }
 
     update() {
+
+
+
+
+
         if (!this.checkOverlap(this.ghost, this.thoughts)){
             this.text.visible = false;
         }
@@ -196,7 +198,7 @@ export default class GhostScene extends Phaser.Scene {
 
         this.ghost.setVelocity(0)
 
-        if (this.inControl){
+        if (this.registry.get('ghostControls')){
         if (this.keyA.isDown) {
             this.ghost.setVelocityX(-this.speed);
             this.ghost.anims.play('left', true);

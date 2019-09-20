@@ -17,6 +17,7 @@ import bullied from "../assets/bullied.png";
 import bully1 from "../assets/bully1.png";
 import bully2 from "../assets/bully2.png";
 
+
 export default class MemoryScene extends Phaser.Scene {
     constructor() {
         super({
@@ -99,6 +100,10 @@ export default class MemoryScene extends Phaser.Scene {
         // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
         camera.setBounds(0, 0, map.widthInPixels + (width / 2), map.heightInPixels);
 
+
+
+      
+
         this.playerRight = this.physics.add.sprite(130, 450, 'dude');
         this.suicidalDude = this.physics.add.sprite(830, 40, 'depressed');
         this.overworkedDude = this.physics.add.sprite(200, 130, 'overworked');
@@ -111,9 +116,9 @@ export default class MemoryScene extends Phaser.Scene {
         this.secondBullyDude = this.physics.add.sprite(850, 1065, 'bully2');
         this.mailDude = this.physics.add.sprite(90, 840, 'mailman');
         this.deadDude = this.physics.add.sprite(640, 850, 'oldMan');
-
+        
         this.playerRight.setCollideWorldBounds()
-        camera.startFollow(this.playerRight);
+        // camera.startFollow(this.playerRight);
 
 
 
@@ -133,6 +138,14 @@ export default class MemoryScene extends Phaser.Scene {
         // this.bulliedCloud = this.physics.add.sprite(800, 940, 'cloud');
         // this.prayingCloud = this.physics.add.sprite(1100, 1200, 'cloud');
         
+        // this.physics.add.overlap(this.playerRight, this.mailDude, (player, mailDude) => {
+            
+
+        //     this.registry.set('playerControls' , false);
+        //     this.registry.set('ghostControls' , true);
+
+
+        // }, null, this);
 
         
         this.anims.create({
@@ -154,13 +167,22 @@ export default class MemoryScene extends Phaser.Scene {
             frameRate: 5,
             repeat: -1
         });
+        // this.anims.create({
+        //     key: 'sparkleP',
+        //     frames: this.anims.generateFrameNumbers('thought', { start: 0, end: 6 }),
+        //     frameRate: 5,
+        //     repeat: -1
+        // });
+
+        // this.playerRight.playAnimation('sparkleP' , true)
+
 
     }
 
     // update functions 
     update(time, delta) {
 
-        this.inControl = this.registry.get('playerControls')
+        // this.inControl = this.registry.get('playerControls')
 
 
         // Resize The Viewport for the Scene
@@ -169,7 +191,7 @@ export default class MemoryScene extends Phaser.Scene {
 
         this.playerRight.setVelocity(0)
 
-        if (this.inControl){
+        if (this.registry.get('playerControls')){
             if (this.keyA.isDown) {
                 this.playerRight.setVelocityX(-this.speed);
                 this.playerRight.anims.play('leftP', true);
