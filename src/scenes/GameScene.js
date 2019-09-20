@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
 import { CST } from "../CST";
 
-
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({
@@ -23,6 +22,7 @@ export default class GameScene extends Phaser.Scene {
 
     // create functions
     create() {
+  
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);

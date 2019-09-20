@@ -26,8 +26,6 @@ export default class GhostScene extends Phaser.Scene {
         this.text;
         this.thoughts;
         this.fakeThoughts;
-        this.bulliedMan;
-        this.overworkedMan;
         this.checkOverlap = this.checkOverlap.bind(this);
         this.inControl = true;
     }
@@ -107,28 +105,28 @@ export default class GhostScene extends Phaser.Scene {
         this.holeMan = this.thoughts.create(hole.x, hole.y, 'thought');
         this.mayorMan = this.thoughts.create(mayor.x, mayor.y, 'thought');
         this.gardenerMan = this.thoughts.create(gardener.x, gardener.y, 'thought');
-        this.fountain = this.physics.add.sprite(fountain.x, fountain.y, 'thought');
         this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
 
-        const sequence = ['fountain',];
-        //
-        this.physics.add.overlap(this.ghost, this.fountain, (thought) => {
-
-            this.emitter.emit('fountain', thought)
-        }, null, this)
-        // //
-
         this.ghost.setCollideWorldBounds()
-
+        this.deathMan.id = true;
+        this.bulliedMan.id = true;
+        this.overworkedMan.id = true;
+        this.mailMan.id = true;
+        this.prayingMan.id = true;
+        this.lostLove.id = true;
+        this.mayorMan.id = true;
+        this.gardenerMan.id = true;
+        this.holeMan.id = true;
+        this.suicidalMan.id = true;
         this.bulliedMan.name = "Please stop! What have I ever done to you!"
         this.overworkedMan.name = "I am actively putting myself in hell everyday.\nfor what?"
         this.mailMan.name = 'Waiting.. waiting for you..'
-        this.prayingMan.name = "Dear God,\nyou are my only solace";
-        this.suicidalMan.name = "I can't take this anymore! Everyday is the same..\nIt's hopeless";
-        this.deathMan.name = "why..i don't understand"
-        this.lostLove.name = "I hate this fountain!\nI hate everything that reminds me of you!";
+        this.prayingMan.name = "Dear God,\nyou are my \nonly solace";
+        this.suicidalMan.name = "I can't take this anymore! \nEveryday is the same..\nIt's hopeless";
+        this.deathMan.name = "why.."
+        this.lostLove.name = "I hate this fountain!\n I hate everything that \nreminds me of you!";
         this.holeMan.name = "OH GOD WHAT IF NO ONE FINDS ME!!!";
-        this.mayorMan.name = "I am failing you fathers.\nI can't be as good as you were";
+        this.mayorMan.name = "I am failing you\n fathers.\nI can't be as good\n as you were";
         this.gardenerMan.name = "Happy thoughts.. Happy thoughts.. Happy thoughts.."
 
         camera.startFollow(this.ghost);
@@ -143,11 +141,16 @@ export default class GhostScene extends Phaser.Scene {
             this.text.x = thought.x - 50;
             this.text.y = thought.y - 50;
             this.text.visible = true;
-            this.registry.set('ghostControls', false);
-            this.inControl = this.registry.get('ghostControls')
-            this.registry.set('playerControls', true);
-            this.ghost.visible = false
-            emitterLeft.visible = false
+
+            if (thought.id) {
+                this.emitter.emit('clearCloud')
+                thought.id = false
+            }
+            // this.registry.set('ghostControls', false);
+            // this.inControl = this.registry.get('ghostControls')
+            // this.registry.set('playerControls', true);
+            // this.ghost.visible = false
+            // emitterLeft.visible = false
 
         }, null, this);
 
