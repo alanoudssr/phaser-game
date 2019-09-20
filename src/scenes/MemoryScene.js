@@ -322,7 +322,7 @@ export default class MemoryScene extends Phaser.Scene {
         this.clouds = this.physics.add.group();
 
         this.overworkedCloud = this.physics.add.sprite(100, 100, 'cloud');
-        this.cloud = this.physics.add.sprite(540, 10, 'smallCloud');
+        this.cloud = this.physics.add.sprite(540, 10, 'cloud');
         this.suicidalCloud = this.physics.add.sprite(800, 100, 'cloud');
         this.mayorCloud = this.physics.add.sprite(1200, 150, 'cloud');
         this.mailCloud = this.physics.add.sprite(100, 600, 'cloud');
