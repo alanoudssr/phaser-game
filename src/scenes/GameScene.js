@@ -4,7 +4,9 @@ import { CST } from "../CST";
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({
-            key: CST.SCENES.GAME
+            key: CST.SCENES.GAME,
+            active: false
+
         })
         this.keyW;
         this.keyA;
@@ -35,9 +37,6 @@ export default class GameScene extends Phaser.Scene {
 
         this.registry.set('ghostControls', true)
         this.registry.set('playerControls', false)
-
-
-        this.scene.launch(CST.SCENES.START);
 
         this.scene.launch(CST.SCENES.MEMORY, {
             keyW: this.keyW,

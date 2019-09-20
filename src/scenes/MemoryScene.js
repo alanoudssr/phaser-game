@@ -45,7 +45,6 @@ export default class MemoryScene extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.MEMORY,
-            active: true
         });
         this.playerRight;
         this.cursors;
@@ -66,7 +65,8 @@ export default class MemoryScene extends Phaser.Scene {
         this.keyH;
         this.worldLayer;
         this.gameOver = false;
-        this.isPossessed = false
+        this.isPossessed = false;
+        this.clouds;
 
     }
 
@@ -90,7 +90,7 @@ export default class MemoryScene extends Phaser.Scene {
         this.load.image("praying2", praying2);
         this.load.image("mayor", mayor); 
         this.load.image("lover", lover);
-        this.load.image("mayor2", mayor2); 
+        this.load.image("mayor2", mayor2);
         this.load.image("lover2", lover2);
         this.load.image("mailman1", mailman1);
         this.load.image("oldMan", oldMan);
@@ -192,141 +192,141 @@ export default class MemoryScene extends Phaser.Scene {
 
         this.anims.create({
             key: 'bully2-idle',
-            frames: 
-            [ 
-            { key: 'bully2a' },
-            { key: 'bully2b', duration: 1 }
-            ],
+            frames:
+                [
+                    { key: 'bully2a' },
+                    { key: 'bully2b', duration: 1 }
+                ],
             frameRate: 2,
             repeat: -1
         });
 
         this.anims.create({
             key: 'bully1-idle',
-            frames: 
-            [ 
-            { key: 'bully1a' },
-            { key: 'bully1b', duration: 1 }
-            ],
+            frames:
+                [
+                    { key: 'bully1a' },
+                    { key: 'bully1b', duration: 1 }
+                ],
             frameRate: 2,
             repeat: -1
         });
 
         this.anims.create({
             key: 'depressed-idle',
-            frames: 
-            [ 
-            { key: 'depressed' },
-            { key: 'depressed2', duration: 1 }
-            ],
+            frames:
+                [
+                    { key: 'depressed' },
+                    { key: 'depressed2', duration: 1 }
+                ],
             frameRate: 2,
             repeat: -1
         });
 
         this.anims.create({
             key: 'mayor-idle',
-            frames: 
-            [ 
-            { key: 'mayor' },
-            { key: 'mayor2', duration: 1 }
-            ],
+            frames:
+                [
+                    { key: 'mayor' },
+                    { key: 'mayor2', duration: 1 }
+                ],
             frameRate: 2,
             repeat: -1
         });
 
         this.anims.create({
             key: 'overworked-idle',
-            frames: 
-            [ 
-            { key: 'overworked1' },
-            { key: 'overworked2', duration: 1 }
-            ],
+            frames:
+                [
+                    { key: 'overworked1' },
+                    { key: 'overworked2', duration: 1 }
+                ],
             frameRate: 2,
             repeat: -1
         });
 
         this.anims.create({
             key: 'girl-idle',
-            frames: 
-            [ 
-            { key: 'girl' },
-            { key: 'girl2', duration: 1 }
-            ],
+            frames:
+                [
+                    { key: 'girl' },
+                    { key: 'girl2', duration: 1 }
+                ],
             frameRate: 2,
             repeat: -1
         });
 
         this.anims.create({
             key: 'praying-idle',
-            frames: 
-            [ 
-            { key: 'praying1' },
-            { key: 'praying2', duration: 1 }
-            ],
+            frames:
+                [
+                    { key: 'praying1' },
+                    { key: 'praying2', duration: 1 }
+                ],
             frameRate: 2,
             repeat: -1
         });
 
         this.anims.create({
             key: 'lover-idle',
-            frames: 
-            [ 
-            { key: 'lover' },
-            { key: 'lover2', duration: 1 }
-            ],
+            frames:
+                [
+                    { key: 'lover' },
+                    { key: 'lover2', duration: 1 }
+                ],
             frameRate: 2,
             repeat: -1
         });
 
         this.anims.create({
             key: 'heartbreak-idle',
-            frames: 
-            [ 
-            { key: 'heartbreak' },
-            { key: 'heartbreak2' },
-            { key: 'heartbreak3', duration: 1 }
-            ],
+            frames:
+                [
+                    { key: 'heartbreak' },
+                    { key: 'heartbreak2' },
+                    { key: 'heartbreak3', duration: 1 }
+                ],
             frameRate: 2,
             repeat: -1
         });
 
         this.anims.create({
             key: 'anger-idle',
-            frames: 
-            [ 
-            { key: 'anger' },
-            { key: 'anger2' },
-            { key: 'anger3', duration: 1 }
-            ],
+            frames:
+                [
+                    { key: 'anger' },
+                    { key: 'anger2' },
+                    { key: 'anger3', duration: 1 }
+                ],
             frameRate: 2,
             repeat: -1
         });
 
         this.anims.create({
             key: 'why-idle',
-            frames: 
-            [ 
-            { key: 'why' },
-            { key: 'why2' },
-            { key: 'why3', duration: 1 }
-            ],
+            frames:
+                [
+                    { key: 'why' },
+                    { key: 'why2' },
+                    { key: 'why3', duration: 1 }
+                ],
             frameRate: 2,
             repeat: -1
         });
 
         this.anims.create({
             key: 'mailman-idle',
-            frames: 
-            [ 
-            { key: 'mailman1' },
-            { key: 'mailman2' },
-            { key: 'mailman3' },
-            { key: 'mailman4' },
-            { key: 'mailman5' },
-            { key: 'mailman6' },
-            { key: 'mailman7' },
-            { key: 'mailman8', duration: 1 }
-            ],
+            frames:
+                [
+                    { key: 'mailman1' },
+                    { key: 'mailman2' },
+                    { key: 'mailman3' },
+                    { key: 'mailman4' },
+                    { key: 'mailman5' },
+                    { key: 'mailman6' },
+                    { key: 'mailman7' },
+                    { key: 'mailman8', duration: 1 }
+                ],
             frameRate: 2,
             repeat: -1
         });
@@ -393,20 +393,29 @@ export default class MemoryScene extends Phaser.Scene {
 
 
 
+    this.clouds = this.physics.add.group();
 
-        // this.overworkedCloud = this.physics.add.sprite(100, 100, 'cloud');
-        // this.cloud = this.physics.add.sprite(540, 10, 'smallCloud');
-        // this.suicidalCloud = this.physics.add.sprite(800, 100, 'cloud');
-        // this.mayorCloud = this.physics.add.sprite(1200, 150, 'cloud');
-        // this.mailCloud = this.physics.add.sprite(100, 600, 'cloud');
-        // this.gardenerCloud = this.physics.add.sprite(500, 500, 'cloud');
-        // this.cloud = this.physics.add.sprite(800, 500, 'cloud');
-        // this.lostLoveCloud = this.physics.add.sprite(1050, 680, 'cloud');
-        // this.holeCloud = this.physics.add.sprite(100, 940, 'cloud');
-        // this.cloud10 = this.physics.add.sprite(500, 990, 'cloud');
-        // this.bulliedCloud = this.physics.add.sprite(800, 940, 'cloud');
-        // this.prayingCloud = this.physics.add.sprite(1100, 1200, 'cloud');
+        this.overworkedCloud = this.clouds.create(100, 100, 'cloud');
+        this.cloud = this.clouds.create(540, 10, 'smallCloud');
+        this.suicidalCloud = this.clouds.create(800, 100, 'cloud');
+        this.mayorCloud = this.clouds.create(1200, 150, 'cloud');
+        this.mailCloud = this.clouds.create(100, 600, 'cloud');
+        this.gardenerCloud = this.clouds.create(500, 500, 'cloud');
+        this.cloud = this.clouds.create(800, 500, 'cloud');
+        this.lostLoveCloud = this.clouds.create(1050, 680, 'cloud');
+        this.holeCloud = this.clouds.create(100, 940, 'cloud');
+        this.cloud10 = this.clouds.create(500, 990, 'cloud');
+        this.bulliedCloud = this.clouds.create(800, 940, 'cloud');
+        this.prayingCloud = this.clouds.create(1100, 1200, 'cloud');
         
+
+
+        this.emitter.on('clearCloud', () => {
+            if (this.counter < this.clouds.getChildren().length) {
+                this.clouds.getChildren()[this.counter].visible = false;
+                this.counter++;
+            }
+        }, this)
     }
     // update functions 
     update(time, delta) {
