@@ -395,18 +395,18 @@ export default class MemoryScene extends Phaser.Scene {
 
     this.clouds = this.physics.add.group();
 
-        this.overworkedCloud = this.clouds.create(100, 100, 'cloud');
-        this.cloud = this.clouds.create(540, 10, 'smallCloud');
-        this.suicidalCloud = this.clouds.create(800, 100, 'cloud');
-        this.mayorCloud = this.clouds.create(1200, 150, 'cloud');
-        this.mailCloud = this.clouds.create(100, 600, 'cloud');
-        this.gardenerCloud = this.clouds.create(500, 500, 'cloud');
-        this.cloud = this.clouds.create(800, 500, 'cloud');
-        this.lostLoveCloud = this.clouds.create(1050, 680, 'cloud');
-        this.holeCloud = this.clouds.create(100, 940, 'cloud');
-        this.cloud10 = this.clouds.create(500, 990, 'cloud');
-        this.bulliedCloud = this.clouds.create(800, 940, 'cloud');
-        this.prayingCloud = this.clouds.create(1100, 1200, 'cloud');
+    //     this.overworkedCloud = this.clouds.create(100, 100, 'cloud');
+    //     this.cloud = this.clouds.create(540, 10, 'smallCloud');
+    //     this.suicidalCloud = this.clouds.create(800, 100, 'cloud');
+    //     this.mayorCloud = this.clouds.create(1200, 150, 'cloud');
+    //     this.mailCloud = this.clouds.create(100, 600, 'cloud');
+    //     this.gardenerCloud = this.clouds.create(500, 500, 'cloud');
+    //     this.cloud = this.clouds.create(800, 500, 'cloud');
+    //     this.lostLoveCloud = this.clouds.create(1050, 680, 'cloud');
+    //     this.holeCloud = this.clouds.create(100, 940, 'cloud');
+    //     this.cloud10 = this.clouds.create(500, 990, 'cloud');
+    //     this.bulliedCloud = this.clouds.create(800, 940, 'cloud');
+    //     this.prayingCloud = this.clouds.create(1100, 1200, 'cloud');
         
 
 
@@ -424,7 +424,9 @@ export default class MemoryScene extends Phaser.Scene {
 
             if(this.keyH.isDown && !this.gameOver && possessed.texture.key == 'deadDude'){
                 
-                console.log("TCL: MemoryScene -> create -> ", possessed.texture.key)
+                this.scene.stop(CST.SCENES.MEMORY);
+                this.scene.stop(CST.SCENES.GHOST);
+                this.scene.start(CST.SCENES.FINAL);
                 this.gameOver = true
             }
         
