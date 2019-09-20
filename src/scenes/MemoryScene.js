@@ -104,7 +104,6 @@ export default class MemoryScene extends Phaser.Scene {
 
       
 
-        this.playerRight = this.physics.add.sprite(130, 450, 'dude');
         this.suicidalDude = this.physics.add.sprite(830, 40, 'depressed');
         this.overworkedDude = this.physics.add.sprite(200, 130, 'overworked');
         this.mayorDude = this.physics.add.sprite(1100, 290, 'mayor');
@@ -116,6 +115,7 @@ export default class MemoryScene extends Phaser.Scene {
         this.secondBullyDude = this.physics.add.sprite(850, 1065, 'bully2');
         this.mailDude = this.physics.add.sprite(90, 840, 'mailman');
         this.deadDude = this.physics.add.sprite(640, 850, 'oldMan');
+        this.playerRight = this.physics.add.sprite(130, 450, 'dude');
         
         this.playerRight.setCollideWorldBounds()
         // camera.startFollow(this.playerRight);
