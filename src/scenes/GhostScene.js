@@ -8,6 +8,7 @@ import darkTileSet from "../assets/maps/tilesets/darkTileSet.png";
 import blue from "../assets/blue.png";
 import fontPng from "../assets/fonts/bitmap/chiller.png"
 import fontXml from "../assets/fonts/bitmap/chiller.xml"
+import { log } from "util";
 
 
 export default class GhostScene extends Phaser.Scene {
@@ -28,7 +29,7 @@ export default class GhostScene extends Phaser.Scene {
         this.bulliedMan;
         this.overworkedMan;
         this.checkOverlap = this.checkOverlap.bind(this);
-        this.inControll = true;
+        this.inControl = true;
     }
 
     init(data) {
@@ -50,6 +51,9 @@ export default class GhostScene extends Phaser.Scene {
     }
 
     create() {
+
+
+        console.log('Player controls from the ghost scene',this.registry.get('playerControls'))
 
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(0, 0, width / 2, height);
@@ -128,6 +132,12 @@ export default class GhostScene extends Phaser.Scene {
             this.text.x = thought.x - 50;
             this.text.y = thought.y - 50;
             this.text.visible = true;
+
+            this.registry.set('ghostControls' , false);
+            this.inControl = this.registry.get('ghostControls')
+            this.registry.set('playerControls' , true);
+
+
         }, null, this);
 
         this.anims.create({
@@ -186,7 +196,7 @@ export default class GhostScene extends Phaser.Scene {
 
         this.ghost.setVelocity(0)
 
-        if (this.inControll){
+        if (this.inControl){
         if (this.keyA.isDown) {
             this.ghost.setVelocityX(-this.speed);
             this.ghost.anims.play('left', true);

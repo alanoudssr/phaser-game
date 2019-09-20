@@ -4,6 +4,18 @@ import dude from "../assets/dude.png";
 import cloud from "../assets/cloud.png";
 import smallCloud from "../assets/cloud3.png";
 import rightMap from "../assets/maps/rightMap.json";
+import rightTileSet from "../assets/maps/tilesets/tuxmon-sample-32px-extruded.png";
+import praying from "../assets/monja.png";
+import mayor from "../assets/mayor.png";
+import oldMan from "../assets/OldMan.png";
+import mailman from "../assets/mailman.png";
+import lover from "../assets/lover.png";
+import girl from "../assets/girl.png";
+import overworked from "../assets/overworked.png";
+import depressed from "../assets/depressed.png";
+import bullied from "../assets/bullied.png";
+import bully1 from "../assets/bully1.png";
+import bully2 from "../assets/bully2.png";
 
 export default class MemoryScene extends Phaser.Scene {
     constructor() {
@@ -14,7 +26,7 @@ export default class MemoryScene extends Phaser.Scene {
         this.playerRight;
         this.cursors;
         this.controls;
-        this.inControll = false
+        this.inControl = false
         this.speed = 160;
         // this.keyW ;
         // this.keyA ;
@@ -30,15 +42,31 @@ export default class MemoryScene extends Phaser.Scene {
 
     }
     preload() {
-        this.load.image("tiles", "https://www.mikewesthad.com/phaser-3-tilemap-blog-posts/post-1/assets/tilesets/tuxmon-sample-32px-extruded.png");
-        this.load.tilemapTiledJSON("map", "https://www.mikewesthad.com/phaser-3-tilemap-blog-posts/post-1/assets/tilemaps/tuxemon-town.json");
+        this.load.image("tiles", rightTileSet);
+        this.load.tilemapTiledJSON("map", rightMap);
         this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
         this.load.image("cloud", cloud);
         this.load.image("smallCloud", smallCloud);
+        this.load.spritesheet("praying", praying, {frameWidth: 28, frameHeight: 30 });
+        this.load.image("mayor", mayor); 
+        this.load.image("lover", lover);
+        this.load.image("mailman", mailman);
+        this.load.image("oldMan", oldMan);
+        this.load.image("girl", girl);
+        this.load.image("overworked", overworked);
+        this.load.image("depressed", depressed);
+        this.load.image("bullied", bullied);
+        this.load.image("bully1", bully1);
+        this.load.image("bully2", bully2);
     }
 
     // create functions
     create() {
+
+
+
+
+
         //Set the Viewport size for the scene
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(width / 2, 0, width, height);
@@ -69,24 +97,26 @@ export default class MemoryScene extends Phaser.Scene {
         });
 
         // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
-        camera.setBounds(0, 0, map.widthInPixels+width/ 2, map.heightInPixels);
+        camera.setBounds(0, 0, map.widthInPixels + (width / 2), map.heightInPixels);
 
-        console.log(this)        
-
-        this.suicidalDude = this.physics.add.sprite(830, 40, 'dude');
-        this.overworkedDude = this.physics.add.sprite(200, 130, 'dude');
-        this.mayorDude = this.physics.add.sprite(1100, 290, 'dude');
-        this.prayingDude = this.physics.add.sprite(1170, 1225, 'dude');
-        this.lostLoveDude = this.physics.add.sprite(1020, 720, 'dude');
-        this.gardenerDude = this.physics.add.sprite(430, 500, 'dude');
-        this.bulliedDude = this.physics.add.sprite(900, 1100, 'dude');
-        this.mailDude = this.physics.add.sprite(100, 830, 'dude');
-        this.deadDude = this.physics.add.sprite(640, 830, 'dude');
         this.playerRight = this.physics.add.sprite(130, 450, 'dude');
-        this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
+        this.suicidalDude = this.physics.add.sprite(830, 40, 'depressed');
+        this.overworkedDude = this.physics.add.sprite(200, 130, 'overworked');
+        this.mayorDude = this.physics.add.sprite(1100, 290, 'mayor');
+        this.prayingDude = this.physics.add.sprite(1170, 1225, 'praying');
+        this.lostLoveDude = this.physics.add.sprite(1020, 720, 'lover');
+        this.gardenerDude = this.physics.add.sprite(420, 500, 'girl');
+        this.bulliedDude = this.physics.add.sprite(900, 1100, 'bullied');
+        this.firstBullyDude = this.physics.add.sprite(870, 1050, 'bully1');
+        this.secondBullyDude = this.physics.add.sprite(850, 1065, 'bully2');
+        this.mailDude = this.physics.add.sprite(90, 840, 'mailman');
+        this.deadDude = this.physics.add.sprite(640, 850, 'oldMan');
 
         this.playerRight.setCollideWorldBounds()
         camera.startFollow(this.playerRight);
+
+
+
 
 
 
@@ -129,13 +159,17 @@ export default class MemoryScene extends Phaser.Scene {
 
     // update functions 
     update(time, delta) {
+
+        this.inControl = this.registry.get('playerControls')
+
+
         // Resize The Viewport for the Scene
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(width / 2, 0, width, height);
 
         this.playerRight.setVelocity(0)
 
-        if (this.inControll){
+        if (this.inControl){
             if (this.keyA.isDown) {
                 this.playerRight.setVelocityX(-this.speed);
                 this.playerRight.anims.play('leftP', true);
