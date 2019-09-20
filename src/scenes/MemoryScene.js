@@ -15,6 +15,7 @@ import girl from "../assets/girl.png";
 import lover2 from "../assets/lover2.png";
 import girl2 from "../assets/girl2.png";
 import depressed from "../assets/depressed.png";
+import depressed2 from "../assets/depressed2.png";
 import bullied from "../assets/bullied.png";
 import bully1a from "../assets/bully1.png";
 import bully1b from "../assets/bully1-1.png";
@@ -30,7 +31,16 @@ import mailman7 from "../assets/mailman7.png";
 import mailman8 from "../assets/mailman8.png";
 import overworked1 from "../assets/old1.png";
 import overworked2 from "../assets/old2.png";
-
+import heartbreak from "../assets/break.png";
+import heartbreak2 from "../assets/break2.png";
+import heartbreak3 from "../assets/break3.png";
+import anger from "../assets/anger.png";
+import anger2 from "../assets/anger2.png";
+import anger3 from "../assets/anger3.png";
+import why from "../assets/why.png";
+import why2 from "../assets/why2.png";
+import why3 from "../assets/why3.png";
+import deadDude from "../assets/deadDude.png";
 export default class MemoryScene extends Phaser.Scene {
     constructor() {
         super({
@@ -64,7 +74,11 @@ export default class MemoryScene extends Phaser.Scene {
         this.load.image("girl2", girl2);
         this.load.image("overworked1", overworked1);
         this.load.image("overworked2", overworked2);
+        this.load.image("anger", anger);
+        this.load.image("anger2", anger2);
+        this.load.image("anger3", anger3);
         this.load.image("depressed", depressed);
+        this.load.image("depressed2", depressed2);
         this.load.image("bullied", bullied);
         this.load.image("bully2a", bully2a);
         this.load.image("bully2b", bully2b);
@@ -77,8 +91,13 @@ export default class MemoryScene extends Phaser.Scene {
         this.load.image("mailman6", mailman6);
         this.load.image("mailman7", mailman7);
         this.load.image("mailman8", mailman8);
-        
-        
+        this.load.image("heartbreak", heartbreak);
+        this.load.image("heartbreak2", heartbreak2);
+        this.load.image("heartbreak3", heartbreak3);
+        this.load.image("why", why);
+        this.load.image("why2", why2);
+        this.load.image("why3", why3);
+        this.load.image("deadDude", deadDude);
     }
 
     // create functions
@@ -132,6 +151,17 @@ export default class MemoryScene extends Phaser.Scene {
             [ 
             { key: 'bully1a' },
             { key: 'bully1b', duration: 1 }
+            ],
+            frameRate: 2,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'depressed-idle',
+            frames: 
+            [ 
+            { key: 'depressed' },
+            { key: 'depressed2', duration: 1 }
             ],
             frameRate: 2,
             repeat: -1
@@ -192,6 +222,41 @@ export default class MemoryScene extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'heartbreak-idle',
+            frames: 
+            [ 
+            { key: 'heartbreak' },
+            { key: 'heartbreak2' },
+            { key: 'heartbreak3', duration: 1 }
+            ],
+            frameRate: 2,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'anger-idle',
+            frames: 
+            [ 
+            { key: 'anger' },
+            { key: 'anger2' },
+            { key: 'anger3', duration: 1 }
+            ],
+            frameRate: 2,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'why-idle',
+            frames: 
+            [ 
+            { key: 'why' },
+            { key: 'why2' },
+            { key: 'why3', duration: 1 }
+            ],
+            frameRate: 2,
+            repeat: -1
+        });
 
         this.anims.create({
             key: 'mailman-idle',
@@ -211,17 +276,21 @@ export default class MemoryScene extends Phaser.Scene {
         });
 
         this.playerRight = this.physics.add.sprite(130, 450, 'dude');
-        this.suicidalDude = this.physics.add.sprite(830, 40, 'depressed');
+        this.suicidalDude = this.physics.add.sprite(830, 40, 'depressed').play('depressed-idle');
         this.overworkedDude = this.physics.add.sprite(200, 130, 'overworked').play('overworked-idle');
+        this.anger = this.physics.add.sprite(200, 95, 'anger').play('anger-idle');
         this.mayorDude = this.physics.add.sprite(1100, 290, 'mayor').play('mayor-idle');
         this.prayingDude = this.physics.add.sprite(1170, 1225, 'praying1').play('praying-idle');
         this.lostLoveDude = this.physics.add.sprite(1020, 720, 'lover').play('lover-idle');
+        this.heartbreak = this.physics.add.sprite(1020, 680, 'heartbreak').play('heartbreak-idle');
         this.gardenerDude = this.physics.add.sprite(420, 500, 'girl').play('girl-idle');
         this.bulliedDude = this.physics.add.sprite(900, 1100, 'bullied');
         this.firstBullyDude = this.physics.add.sprite(870, 1050, 'bully1a').play('bully1-idle');
         this.secondBullyDude = this.add.sprite(850, 1065, 'bully2a').play('bully2-idle');
         this.mailDude = this.physics.add.sprite(90, 840, 'mailman1').play('mailman-idle');
         this.holeDude = this.physics.add.sprite(125, 1120, 'oldMan');
+        this.deadDude = this.physics.add.sprite(620, 830, 'deadDude');
+        this.why = this.physics.add.sprite(620, 790, 'why').play('why-idle');
         // this.overworkedCloud = this.physics.add.sprite(100, 100, 'cloud');
         // this.cloud = this.physics.add.sprite(540, 10, 'smallCloud');
         // this.suicidalCloud = this.physics.add.sprite(800, 100, 'cloud');
