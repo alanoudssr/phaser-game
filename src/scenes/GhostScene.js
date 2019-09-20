@@ -24,6 +24,7 @@ export default class GhostScene extends Phaser.Scene {
         this.text;
         this.thoughts;
         this.fakeThoughts;
+        this.fakeThoughts2;
         this.bulliedMan;
         this.overworkedMan;
         this.checkOverlap = this.checkOverlap.bind(this);
@@ -82,9 +83,21 @@ export default class GhostScene extends Phaser.Scene {
 
         this.thoughts = this.physics.add.group();
         this.fakeThoughts = this.physics.add.group();
+        this.fakeThoughts2 = this.physics.add.group();
+        this.fakeThoughts3 = this.physics.add.group();
+        this.fakeThoughts4 = this.physics.add.group();
+        this.fakeThoughts5 = this.physics.add.group();
+        this.fakeThoughts6 = this.physics.add.group();
 
-       this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 20, y: 50, stepX: 250, stepY: 150 } })
-       this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 1000, y: 1000, stepX: -250, stepY: -150 } })
+
+       this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 150, y: 150, stepX: 150, stepY: 120 } });
+       this.fakeThoughts2.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 700, y: 750, stepX: -250, stepY: -10 } });
+       this.fakeThoughts3.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 1000, y: 1050, stepX: -250, stepY: -10 } });
+       this.fakeThoughts4.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 1000, y: 550, stepX: -250, stepY: -10 } });
+       this.fakeThoughts5.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 100, y: 1050, stepX: -10, stepY: -250 } });
+       this.fakeThoughts6.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 800, y: 350, stepX: -100, stepY: -150 } });
+
+
 
         this.mailMan = this.thoughts.create(waitingMail.x, waitingMail.y, 'thought')
         this.overworkedMan = this.thoughts.create(overworked.x, overworked.y, 'thought')
@@ -159,8 +172,16 @@ export default class GhostScene extends Phaser.Scene {
         });
 
 
-        this.thoughts.playAnimation('sparkle', true)
-        this.fakeThoughts.playAnimation('sparkle', true)
+        this.thoughts.playAnimation('sparkle', true);
+        this.fakeThoughts.playAnimation('sparkle', true);
+        this.fakeThoughts2.playAnimation('sparkle', true);
+        this.fakeThoughts3.playAnimation('sparkle', true);
+        this.fakeThoughts4.playAnimation('sparkle', true);
+        this.fakeThoughts5.playAnimation('sparkle', true);
+        this.fakeThoughts6.playAnimation('sparkle', true);
+
+
+
 
     }
     checkOverlap(spriteA, spriteB, range = 100) {
