@@ -10,6 +10,8 @@ export default class GameScene extends Phaser.Scene {
         this.keyA;
         this.keyS;
         this.keyD;
+        this.keyX;
+        this.keyH;
     }
 
     init() {
@@ -24,6 +26,8 @@ export default class GameScene extends Phaser.Scene {
     create() {
   
         this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.keyH = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.H);
+        this.keyX = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
         this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -40,12 +44,15 @@ export default class GameScene extends Phaser.Scene {
             keyA: this.keyA,
             keyS: this.keyS,
             keyD: this.keyD,
+            keyX: this.keyX,
+            keyH: this.keyH,
             emitter
         });
         this.scene.launch(CST.SCENES.GHOST, {
             keyW: this.keyW,
             keyA: this.keyA,
             keyS: this.keyS,
+            keyX: this.keyX,
             keyD: this.keyD,
             emitter
         });
