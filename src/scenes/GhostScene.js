@@ -17,6 +17,7 @@ export default class GhostScene extends Phaser.Scene {
             active: true
         });
         this.speed = 160;
+        this.emitter;
         this.ghost;
         this.keyW;
         this.keyA;
@@ -32,10 +33,11 @@ export default class GhostScene extends Phaser.Scene {
     }
 
     init(data) {
-        this.keyW =  data.keyW ;
-        this.keyA =  data.keyA ;
-        this.keyS =  data.keyS ;
-        this.keyD =  data.keyD;
+        this.keyW = data.keyW;
+        this.keyA = data.keyA;
+        this.keyS = data.keyS;
+        this.keyD = data.keyD;
+        this.emitter = data.emitter
 
     }
     preload() {
@@ -52,7 +54,7 @@ export default class GhostScene extends Phaser.Scene {
     create() {
 
 
-        console.log('Player controls from the ghost scene',this.registry.get('playerControls'))
+        console.log('Player controls from the ghost scene', this.registry.get('playerControls'))
 
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(0, 0, width / 2, height);
@@ -68,11 +70,11 @@ export default class GhostScene extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
         const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
-       
+
         const particles = this.add.particles('blue');
         const emitterLeft = particles.createEmitter({
             speedX: { min: -10, max: 10 },
-            speedY: { min: -30, max: 10 }, 
+            speedY: { min: -30, max: 10 },
             scale: { start: 1, end: 0 },
             blendMode: 'ADD'
         })
@@ -87,12 +89,13 @@ export default class GhostScene extends Phaser.Scene {
         const hole = map.findObject("Objects", obj => obj.name === "Hole");
         const mayor = map.findObject("Objects", obj => obj.name === "Crying Statue");
         const gardener = map.findObject("Objects", obj => obj.name === "Gardening");
+        const fountain = map.findObject("Objects", obj => obj.name === "Fountain");
 
         this.thoughts = this.physics.add.group();
         this.fakeThoughts = this.physics.add.group();
 
-       this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 20, y: 50, stepX: 250, stepY: 150 } })
-       this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 1000, y: 1000, stepX: -250, stepY: -150 } })
+        this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 20, y: 50, stepX: 250, stepY: 150 } })
+        this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 1000, y: 1000, stepX: -250, stepY: -150 } })
 
         this.mailMan = this.thoughts.create(waitingMail.x, waitingMail.y, 'thought')
         this.overworkedMan = this.thoughts.create(overworked.x, overworked.y, 'thought')
@@ -104,12 +107,21 @@ export default class GhostScene extends Phaser.Scene {
         this.holeMan = this.thoughts.create(hole.x, hole.y, 'thought');
         this.mayorMan = this.thoughts.create(mayor.x, mayor.y, 'thought');
         this.gardenerMan = this.thoughts.create(gardener.x, gardener.y, 'thought');
+        this.fountain = this.physics.add.sprite(fountain.x, fountain.y, 'thought');
         this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
-     
+
+        const sequence = ['fountain',];
+        //
+        this.physics.add.overlap(this.ghost, this.fountain, (thought) => {
+
+            this.emitter.emit('fountain', thought)
+        }, null, this)
+        // //
+
         this.ghost.setCollideWorldBounds()
 
         this.bulliedMan.name = "Please stop! What have I ever done to you!"
-        this.overworkedMan.name = "I am actively putting myself in hell everyday.\nfor what?"   
+        this.overworkedMan.name = "I am actively putting myself in hell everyday.\nfor what?"
         this.mailMan.name = 'Waiting.. waiting for you..'
         this.prayingMan.name = "Dear God,\nyou are my only solace";
         this.suicidalMan.name = "I can't take this anymore! Everyday is the same..\nIt's hopeless";
@@ -122,7 +134,7 @@ export default class GhostScene extends Phaser.Scene {
         camera.startFollow(this.ghost);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         emitterLeft.startFollow(this.ghost);
-        
+
         this.text = this.add.text(waitingMail.x - 25, waitingMail.y - 50, "Don't Touch Me")
         this.text.visible = false;
 
@@ -131,11 +143,12 @@ export default class GhostScene extends Phaser.Scene {
             this.text.x = thought.x - 50;
             this.text.y = thought.y - 50;
             this.text.visible = true;
+            this.registry.set('ghostControls', false);
+            this.inControl = this.registry.get('ghostControls')
+            this.registry.set('playerControls', true);
+            this.ghost.visible = false
+            emitterLeft.visible = false
 
-            this.registry.set('ghostControls' , false);
-            this.registry.set('playerControls' , true);
-
-            
         }, null, this);
 
         this.anims.create({
@@ -160,7 +173,13 @@ export default class GhostScene extends Phaser.Scene {
 
         this.anims.create({
             key: 'sparkle',
-            frames: this.anims.generateFrameNumbers('thought', { start: 0, end: 6 }),
+            frames: this.anims.generateFrameNumbers('thought', { start: 4, end: 5 }),
+            frameRate: 5,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'sparkle',
+            frames: this.anims.generateFrameNumbers('thought', { start: 4, end: 5 }),
             frameRate: 5,
             repeat: -1
         });
@@ -177,20 +196,16 @@ export default class GhostScene extends Phaser.Scene {
         boundsA.height += range;
         boundsA.x -= range / 2;
         boundsA.y -= range / 2;
- if (children.map(child=>{ boundsB = child.getBounds()
-        
-        if (Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB)) return true
-    }).includes(true)) return true
+        return (children.map(child => {
+            boundsB = child.getBounds()
+
+            if (Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB)) return true
+        }).includes(true))
 
     }
 
     update() {
-
-
-
-
-
-        if (!this.checkOverlap(this.ghost, this.thoughts)){
+        if (!this.checkOverlap(this.ghost, this.thoughts)) {
             this.text.visible = false;
         }
         let { width, height } = this.sys.game.canvas;
@@ -198,26 +213,26 @@ export default class GhostScene extends Phaser.Scene {
 
         this.ghost.setVelocity(0)
 
-        if (this.registry.get('ghostControls')){
-        if (this.keyA.isDown) {
-            this.ghost.setVelocityX(-this.speed);
-            this.ghost.anims.play('left', true);
+        if (this.inControl) {
+            if (this.keyA.isDown) {
+                this.ghost.setVelocityX(-this.speed);
+                this.ghost.anims.play('left', true);
+            }
+            else if (this.keyD.isDown) {
+                this.ghost.setVelocityX(this.speed);
+                this.ghost.anims.play('right', true);
+            }
+            else if (this.keyW.isDown) {
+                this.ghost.setVelocityY(-this.speed);
+            }
+            else if (this.keyS.isDown) {
+                this.ghost.setVelocityY(this.speed);
+            }
+            else {
+                this.ghost.setVelocityX(0);
+                this.ghost.anims.play('turn');
+            }
         }
-        else if (this.keyD.isDown) {
-            this.ghost.setVelocityX(this.speed);
-            this.ghost.anims.play('right', true);
-        }
-        else if (this.keyW.isDown) {
-            this.ghost.setVelocityY(-this.speed);
-        }
-        else if (this.keyS.isDown) {
-            this.ghost.setVelocityY(this.speed);
-        }
-        else {
-            this.ghost.setVelocityX(0);
-            this.ghost.anims.play('turn');
-        }
-    }
 
     }
 

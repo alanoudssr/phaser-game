@@ -16,6 +16,8 @@ import depressed from "../assets/depressed.png";
 import bullied from "../assets/bullied.png";
 import bully1 from "../assets/bully1.png";
 import bully2 from "../assets/bully2.png";
+import blue from "../assets/blue.png";
+
 
 
 export default class MemoryScene extends Phaser.Scene {
@@ -29,17 +31,17 @@ export default class MemoryScene extends Phaser.Scene {
         this.controls;
         this.inControl = false
         this.speed = 160;
-        // this.keyW ;
-        // this.keyA ;
-        // this.keyS ;
-        // this.keyD;
+        this.emitter;
+        this.emitterRight;
+        this.clouds;
     }
 
     init(data) {
-        this.keyW =  data.keyW ;
-        this.keyA =  data.keyA ;
-        this.keyS =  data.keyS ;
-        this.keyD =  data.keyD;
+        this.emitter = data.emitter
+        this.keyW = data.keyW;
+        this.keyA = data.keyA;
+        this.keyS = data.keyS;
+        this.keyD = data.keyD;
 
     }
     preload() {
@@ -48,8 +50,8 @@ export default class MemoryScene extends Phaser.Scene {
         this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
         this.load.image("cloud", cloud);
         this.load.image("smallCloud", smallCloud);
-        this.load.spritesheet("praying", praying, {frameWidth: 28, frameHeight: 30 });
-        this.load.image("mayor", mayor); 
+        this.load.spritesheet("praying", praying, { frameWidth: 28, frameHeight: 30 });
+        this.load.image("mayor", mayor);
         this.load.image("lover", lover);
         this.load.image("mailman", mailman);
         this.load.image("oldMan", oldMan);
@@ -59,11 +61,12 @@ export default class MemoryScene extends Phaser.Scene {
         this.load.image("bullied", bullied);
         this.load.image("bully1", bully1);
         this.load.image("bully2", bully2);
+        this.load.image("blue", blue);
+
     }
 
     // create functions
     create() {
-
 
 
 
@@ -85,6 +88,7 @@ export default class MemoryScene extends Phaser.Scene {
 
         // Phaser supports multiple cameras, but you can access the default camera like this:
         const camera = this.cameras.main;
+        this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
         // Set up the arrows to control the camera
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -99,10 +103,13 @@ export default class MemoryScene extends Phaser.Scene {
 
         // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
         camera.setBounds(0, 0, map.widthInPixels + (width / 2), map.heightInPixels);
-
-
-
-      
+        const particlesRight = this.add.particles('blue');
+        this.emitterRight = particlesRight.createEmitter({
+            speedX: { min: -10, max: 10 },
+            speedY: { min: -30, max: 10 },
+            scale: { start: 1, end: 0 },
+            blendMode: 'ADD'
+        })
 
         this.suicidalDude = this.physics.add.sprite(830, 40, 'depressed');
         this.overworkedDude = this.physics.add.sprite(200, 130, 'overworked');
@@ -116,38 +123,35 @@ export default class MemoryScene extends Phaser.Scene {
         this.mailDude = this.physics.add.sprite(90, 840, 'mailman');
         this.deadDude = this.physics.add.sprite(640, 850, 'oldMan');
         this.playerRight = this.physics.add.sprite(130, 450, 'dude');
-        
-        this.playerRight.setCollideWorldBounds()
-        // camera.startFollow(this.playerRight);
+
+        this.clouds = this.physics.add.group();
+
+        this.overworkedCloud = this.clouds.create(100, 100, 'cloud');
+        this.cloud = this.clouds.create(540, 10, 'smallCloud');
+        this.suicidalCloud = this.clouds.create(800, 100, 'cloud');
+        this.mayorCloud = this.clouds.create(1200, 150, 'cloud');
+        this.mailCloud = this.clouds.create(100, 600, 'cloud');
+        this.gardenerCloud = this.clouds.create(500, 500, 'cloud');
+        this.cloud = this.clouds.create(800, 500, 'cloud');
+        this.lostLoveCloud = this.clouds.create(1050, 680, 'cloud');
+        this.holeCloud = this.clouds.create(100, 940, 'cloud');
+        this.cloud10 = this.clouds.create(500, 990, 'cloud');
+        this.bulliedCloud = this.clouds.create(800, 940, 'cloud');
+        this.prayingCloud = this.clouds.create(1100, 1200, 'cloud');
+
+        this.emitter.on('fountain', (data) => {
+            console.log(data);
+
+            this.clouds.getChildren().forEach(child => { child.visible = false })
+        }, this)
+
+        // this.playerRight.setCollideWorldBounds()
+        worldLayer.setCollisionByProperty({ collides: true });
+        this.physics.add.collider(this.playerRight, worldLayer);
 
 
+        this.emitterRight.startFollow(this.playerRight);
 
-
-
-
-        // this.overworkedCloud = this.physics.add.sprite(100, 100, 'cloud');
-        // this.cloud = this.physics.add.sprite(540, 10, 'smallCloud');
-        // this.suicidalCloud = this.physics.add.sprite(800, 100, 'cloud');
-        // this.mayorCloud = this.physics.add.sprite(1200, 150, 'cloud');
-        // this.mailCloud = this.physics.add.sprite(100, 600, 'cloud');
-        // this.gardenerCloud = this.physics.add.sprite(500, 500, 'cloud');
-        // this.cloud = this.physics.add.sprite(800, 500, 'cloud');
-        // this.lostLoveCloud = this.physics.add.sprite(1050, 680, 'cloud');
-        // this.holeCloud = this.physics.add.sprite(100, 940, 'cloud');
-        // this.cloud10 = this.physics.add.sprite(500, 990, 'cloud');
-        // this.bulliedCloud = this.physics.add.sprite(800, 940, 'cloud');
-        // this.prayingCloud = this.physics.add.sprite(1100, 1200, 'cloud');
-        
-        // this.physics.add.overlap(this.playerRight, this.mailDude, (player, mailDude) => {
-            
-
-        //     this.registry.set('playerControls' , false);
-        //     this.registry.set('ghostControls' , true);
-
-
-        // }, null, this);
-
-        
         this.anims.create({
             key: 'leftP',
             frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
@@ -157,7 +161,7 @@ export default class MemoryScene extends Phaser.Scene {
 
         this.anims.create({
             key: 'turnP',
-            frames: [{ key: 'dude', frame: 4}],
+            frames: [{ key: 'dude', frame: 4 }],
             frameRate: 20
         });
 
@@ -167,15 +171,7 @@ export default class MemoryScene extends Phaser.Scene {
             frameRate: 5,
             repeat: -1
         });
-        // this.anims.create({
-        //     key: 'sparkleP',
-        //     frames: this.anims.generateFrameNumbers('thought', { start: 0, end: 6 }),
-        //     frameRate: 5,
-        //     repeat: -1
-        // });
-
-        // this.playerRight.playAnimation('sparkleP' , true)
-
+        this.emitterRight.visible = false
 
     }
 
@@ -191,7 +187,8 @@ export default class MemoryScene extends Phaser.Scene {
 
         this.playerRight.setVelocity(0)
 
-        if (this.registry.get('playerControls')){
+        if (this.registry.get('playerControls')) {
+            this.emitterRight.visible = true
             if (this.keyA.isDown) {
                 this.playerRight.setVelocityX(-this.speed);
                 this.playerRight.anims.play('leftP', true);
