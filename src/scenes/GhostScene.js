@@ -26,8 +26,6 @@ export default class GhostScene extends Phaser.Scene {
         this.text;
         this.thoughts;
         this.fakeThoughts;
-        this.bulliedMan;
-        this.overworkedMan;
         this.checkOverlap = this.checkOverlap.bind(this);
         this.inControl = true;
     }
@@ -107,19 +105,19 @@ export default class GhostScene extends Phaser.Scene {
         this.holeMan = this.thoughts.create(hole.x, hole.y, 'thought');
         this.mayorMan = this.thoughts.create(mayor.x, mayor.y, 'thought');
         this.gardenerMan = this.thoughts.create(gardener.x, gardener.y, 'thought');
-        this.fountain = this.physics.add.sprite(fountain.x, fountain.y, 'thought');
         this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
 
-        const sequence = ['fountain',];
-        //
-        this.physics.add.overlap(this.ghost, this.fountain, (thought) => {
-
-            this.emitter.emit('fountain', thought)
-        }, null, this)
-        // //
-
         this.ghost.setCollideWorldBounds()
-
+        this.deathMan.id = true;
+        this.bulliedMan.id = true;
+        this.overworkedMan.id = true;
+        this.mailMan.id = true;
+        this.prayingMan.id = true;
+        this.lostLove.id = true;
+        this.mayorMan.id = true;
+        this.gardenerMan.id = true;
+        this.holeMan.id = true;
+        this.suicidalMan.id = true;
         this.bulliedMan.name = "Please stop! What have I ever done to you!"
         this.overworkedMan.name = "I am actively putting myself in hell everyday.\nfor what?"
         this.mailMan.name = 'Waiting.. waiting for you..'
@@ -143,6 +141,11 @@ export default class GhostScene extends Phaser.Scene {
             this.text.x = thought.x - 50;
             this.text.y = thought.y - 50;
             this.text.visible = true;
+
+            if (thought.id) {
+                this.emitter.emit('clearCloud')
+                thought.id = false
+            }
             // this.registry.set('ghostControls', false);
             // this.inControl = this.registry.get('ghostControls')
             // this.registry.set('playerControls', true);

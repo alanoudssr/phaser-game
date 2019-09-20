@@ -33,6 +33,7 @@ export default class MemoryScene extends Phaser.Scene {
         this.emitter;
         this.emitterRight;
         this.clouds;
+        this.counter = 0
     }
 
     init(data) {
@@ -138,13 +139,13 @@ export default class MemoryScene extends Phaser.Scene {
         this.bulliedCloud = this.clouds.create(800, 940, 'cloud');
         this.prayingCloud = this.clouds.create(1100, 1200, 'cloud');
 
-        this.emitter.on('fountain', (data) => {
-            console.log(data);
-
-            this.clouds.getChildren().forEach(child => { child.visible = false })
+        this.emitter.on('clearCloud', () => {
+            if (this.counter < this.clouds.getChildren().length) {
+                this.clouds.getChildren()[this.counter].visible = false;
+                this.counter++;
+            }
         }, this)
 
-        // this.playerRight.setCollideWorldBounds()
         worldLayer.setCollisionByProperty({ collides: true });
         this.physics.add.collider(this.playerRight, worldLayer);
 
@@ -174,7 +175,6 @@ export default class MemoryScene extends Phaser.Scene {
 
     }
 
-    // update functions 
     update(time, delta) {
 
         this.inControl = this.registry.get('playerControls')
