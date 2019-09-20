@@ -112,25 +112,17 @@ export default class MemoryScene extends Phaser.Scene {
     // create functions
     create() {
 
-
-
-
-        //Set the Viewport size for the scene
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(width / 2, 0, width, height);
 
         const map = this.make.tilemap({ key: "map" });
 
-        // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
-        // Phaser's cache (i.e. the name you used in preload)
         const tileset = map.addTilesetImage("tuxmon-sample-32px-extruded", "tiles");
 
-        // Parameters: layer name (or index) from Tiled, tileset, x, y
         const belowLayer = map.createStaticLayer("Below Player", tileset, 0, 0);
         const worldLayer = map.createStaticLayer("World", tileset, 0, 0);
         const aboveLayer = map.createStaticLayer("Above Player", tileset, 0, 0);
 
-        // Phaser supports multiple cameras, but you can access the default camera like this:
         const camera = this.cameras.main;
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
