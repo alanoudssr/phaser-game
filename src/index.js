@@ -2,6 +2,7 @@ import GhostScene from "./scenes/GhostScene"
 import MemoryScene from "./scenes/MemoryScene";
 import GameScene from "./scenes/GameScene";
 import Phaser from 'phaser';
+import StartScene from "./scenes/StartScene";
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight;
@@ -14,9 +15,9 @@ const config = {
     global: [],
     scene: []
   },
-  backgroundColor: "#392542",
+  backgroundColor: "#12113d",
   scene: [
-    GameScene, GhostScene, MemoryScene
+    GameScene, StartScene, GhostScene, MemoryScene
   ],
   physics: {
     default: 'arcade',

@@ -45,7 +45,7 @@ export default class MemoryScene extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.MEMORY,
-            active: true
+            active: false
         });
         this.playerRight;
         this.cursors;

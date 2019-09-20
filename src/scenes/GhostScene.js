@@ -13,7 +13,7 @@ export default class GhostScene extends Phaser.Scene {
     constructor(config) {
         super({
             key: CST.SCENES.GHOST,
-            active: true
+            active: false
         });
         this.speed = 160;
         this.ghost;

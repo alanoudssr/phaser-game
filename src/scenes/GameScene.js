@@ -21,8 +21,8 @@ export default class GameScene extends Phaser.Scene {
         
         
         this.scene.launch(CST.SCENES.START);
-        this.scene.launch(CST.SCENES.MEMORY);
         this.scene.launch(CST.SCENES.GHOST);
+        this.scene.launch(CST.SCENES.MEMORY);
         
 
     }
