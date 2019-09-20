@@ -9,13 +9,14 @@ import blue from "../assets/blue.png";
 import fontPng from "../assets/fonts/bitmap/chiller.png"
 import fontXml from "../assets/fonts/bitmap/chiller.xml"
 
+
 export default class GhostScene extends Phaser.Scene {
     constructor(config) {
         super({
             key: CST.SCENES.GHOST,
-            active: false
         });
         this.speed = 160;
+        this.emitter;
         this.ghost;
         this.keyW;
         this.keyA;
@@ -28,10 +29,15 @@ export default class GhostScene extends Phaser.Scene {
         this.bulliedMan;
         this.overworkedMan;
         this.checkOverlap = this.checkOverlap.bind(this);
-        this.inControll = true;
+        this.inControl = true;
     }
 
-    init() {
+    init(data) {
+        this.keyW = data.keyW;
+        this.keyA = data.keyA;
+        this.keyS = data.keyS;
+        this.keyD = data.keyD;
+        this.emitter = data.emitter
 
     }
     preload() {
@@ -47,6 +53,9 @@ export default class GhostScene extends Phaser.Scene {
 
     create() {
 
+
+        console.log('Player controls from the ghost scene', this.registry.get('playerControls'))
+
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(0, 0, width / 2, height);
 
@@ -61,11 +70,11 @@ export default class GhostScene extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
         const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
-       
+
         const particles = this.add.particles('blue');
         const emitterLeft = particles.createEmitter({
             speedX: { min: -10, max: 10 },
-            speedY: { min: -30, max: 10 }, 
+            speedY: { min: -30, max: 10 },
             scale: { start: 1, end: 0 },
             blendMode: 'ADD'
         })
@@ -80,6 +89,7 @@ export default class GhostScene extends Phaser.Scene {
         const hole = map.findObject("Objects", obj => obj.name === "Hole");
         const mayor = map.findObject("Objects", obj => obj.name === "Crying Statue");
         const gardener = map.findObject("Objects", obj => obj.name === "Gardening");
+        
         var ghostText = 
         [
             "Find me... Hear his thought... ",
@@ -91,7 +101,6 @@ export default class GhostScene extends Phaser.Scene {
 
         this.add.text(200, 50, ghostText, { fontFamily: 'Tohama', fontSize: 28, color: 'white', lineSpacing: 30 });
         this.add.text(950, 50, '(x marks the spot)', { fontFamily: 'Tohama', fontSize: 22, color: 'white', lineSpacing: 30 });
-
 
         this.thoughts = this.physics.add.group();
         this.fakeThoughts = this.physics.add.group();
@@ -122,24 +131,33 @@ export default class GhostScene extends Phaser.Scene {
         this.mayorMan = this.thoughts.create(mayor.x, mayor.y, 'thought');
         this.gardenerMan = this.thoughts.create(gardener.x, gardener.y, 'thought');
         this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
-     
-        this.ghost.setCollideWorldBounds()
 
+        this.ghost.setCollideWorldBounds()
+        this.deathMan.id = true;
+        this.bulliedMan.id = true;
+        this.overworkedMan.id = true;
+        this.mailMan.id = true;
+        this.prayingMan.id = true;
+        this.lostLove.id = true;
+        this.mayorMan.id = true;
+        this.gardenerMan.id = true;
+        this.holeMan.id = true;
+        this.suicidalMan.id = true;
         this.bulliedMan.name = "Please stop! What have I ever done to you!"
-        this.overworkedMan.name = "I am actively putting myself in hell everyday.\nfor what?"   
+        this.overworkedMan.name = "I am actively putting myself in hell everyday.\nfor what?"
         this.mailMan.name = 'Waiting.. waiting for you..'
-        this.prayingMan.name = "Dear God,\nyou are my only solace";
-        this.suicidalMan.name = "I can't take this anymore! Everyday is the same..\nIt's hopeless";
+        this.prayingMan.name = "Dear God,\nyou are my \nonly solace";
+        this.suicidalMan.name = "I can't take this anymore! \nEveryday is the same..\nIt's hopeless";
         this.deathMan.name = "why.."
-        this.lostLove.name = "I hate this fountain!\nI hate everything that reminds me of you!";
+        this.lostLove.name = "I hate this fountain!\n I hate everything that \nreminds me of you!";
         this.holeMan.name = "OH GOD WHAT IF NO ONE FINDS ME!!!";
-        this.mayorMan.name = "I am failing you fathers.\nI can't be as good as you were";
+        this.mayorMan.name = "I am failing you\n fathers.\nI can't be as good\n as you were";
         this.gardenerMan.name = "Happy thoughts.. Happy thoughts.. Happy thoughts.."
 
         camera.startFollow(this.ghost);
         camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         emitterLeft.startFollow(this.ghost);
-        
+
         this.text = this.add.text(waitingMail.x - 25, waitingMail.y - 50, "Don't Touch Me")
         this.text.visible = false;
 
@@ -148,13 +166,18 @@ export default class GhostScene extends Phaser.Scene {
             this.text.x = thought.x - 50;
             this.text.y = thought.y - 50;
             this.text.visible = true;
+
+            if (thought.id) {
+                this.emitter.emit('clearCloud')
+                thought.id = false
+            }
+            // this.registry.set('ghostControls', false);
+            // this.inControl = this.registry.get('ghostControls')
+            // this.registry.set('playerControls', true);
+            // this.ghost.visible = false
+            // emitterLeft.visible = false
+
         }, null, this);
-
-
-        this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-        this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-        this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-        this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
         this.anims.create({
             key: 'left',
@@ -178,7 +201,13 @@ export default class GhostScene extends Phaser.Scene {
 
         this.anims.create({
             key: 'sparkle',
-            frames: this.anims.generateFrameNumbers('thought', { start: 0, end: 6 }),
+            frames: this.anims.generateFrameNumbers('thought', { start: 4, end: 5 }),
+            frameRate: 5,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'sparkle',
+            frames: this.anims.generateFrameNumbers('thought', { start: 4, end: 5 }),
             frameRate: 5,
             repeat: -1
         });
@@ -204,15 +233,16 @@ export default class GhostScene extends Phaser.Scene {
         boundsA.height += range;
         boundsA.x -= range / 2;
         boundsA.y -= range / 2;
- if (children.map(child=>{ boundsB = child.getBounds()
-        
-        if (Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB)) return true
-    }).includes(true)) return true
+        return (children.map(child => {
+            boundsB = child.getBounds()
+
+            if (Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB)) return true
+        }).includes(true))
 
     }
 
     update() {
-        if (!this.checkOverlap(this.ghost, this.thoughts)){
+        if (!this.checkOverlap(this.ghost, this.thoughts)) {
             this.text.visible = false;
         }
         let { width, height } = this.sys.game.canvas;
@@ -220,26 +250,26 @@ export default class GhostScene extends Phaser.Scene {
 
         this.ghost.setVelocity(0)
 
-        if (this.inControll){
-        if (this.keyA.isDown) {
-            this.ghost.setVelocityX(-this.speed);
-            this.ghost.anims.play('left', true);
+        if (this.inControl) {
+            if (this.keyA.isDown) {
+                this.ghost.setVelocityX(-this.speed);
+                this.ghost.anims.play('left', true);
+            }
+            else if (this.keyD.isDown) {
+                this.ghost.setVelocityX(this.speed);
+                this.ghost.anims.play('right', true);
+            }
+            else if (this.keyW.isDown) {
+                this.ghost.setVelocityY(-this.speed);
+            }
+            else if (this.keyS.isDown) {
+                this.ghost.setVelocityY(this.speed);
+            }
+            else {
+                this.ghost.setVelocityX(0);
+                this.ghost.anims.play('turn');
+            }
         }
-        else if (this.keyD.isDown) {
-            this.ghost.setVelocityX(this.speed);
-            this.ghost.anims.play('right', true);
-        }
-        else if (this.keyW.isDown) {
-            this.ghost.setVelocityY(-this.speed);
-        }
-        else if (this.keyS.isDown) {
-            this.ghost.setVelocityY(this.speed);
-        }
-        else {
-            this.ghost.setVelocityX(0);
-            this.ghost.anims.play('turn');
-        }
-    }
 
     }
 

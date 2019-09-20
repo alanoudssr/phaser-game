@@ -45,15 +45,27 @@ export default class MemoryScene extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.MEMORY,
-            active: false
         });
         this.playerRight;
         this.cursors;
         this.controls;
-
+        this.inControl = false
+        this.speed = 160;
+        this.emitter;
+        this.emitterRight;
+        this.clouds;
+        this.counter = 0;
+        this.timer = 10;
+        this.timeText;
+        this.gameOver;
     }
 
-    init() {
+    init(data) {
+        this.emitter = data.emitter
+        this.keyW = data.keyW;
+        this.keyA = data.keyA;
+        this.keyS = data.keyS;
+        this.keyD = data.keyD;
 
     }
     preload() {
@@ -102,6 +114,10 @@ export default class MemoryScene extends Phaser.Scene {
 
     // create functions
     create() {
+
+
+
+
         //Set the Viewport size for the scene
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(width / 2, 0, width, height);
@@ -119,6 +135,7 @@ export default class MemoryScene extends Phaser.Scene {
 
         // Phaser supports multiple cameras, but you can access the default camera like this:
         const camera = this.cameras.main;
+        this.physics.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
 
         // Set up the arrows to control the camera
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -133,6 +150,13 @@ export default class MemoryScene extends Phaser.Scene {
 
         // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
         camera.setBounds(0, 0, map.widthInPixels + (width / 2), map.heightInPixels);
+        const particlesRight = this.add.particles('blue');
+        this.emitterRight = particlesRight.createEmitter({
+            speedX: { min: -10, max: 10 },
+            speedY: { min: -30, max: 10 },
+            scale: { start: 1, end: 0 },
+            blendMode: 'ADD'
+        })
 
         this.anims.create({
             key: 'bully2-idle',
@@ -274,7 +298,9 @@ export default class MemoryScene extends Phaser.Scene {
             frameRate: 2,
             repeat: -1
         });
-
+ 
+        
+        // update functions 
         this.playerRight = this.physics.add.sprite(130, 450, 'dude');
         this.suicidalDude = this.physics.add.sprite(830, 40, 'depressed').play('depressed-idle');
         this.overworkedDude = this.physics.add.sprite(200, 130, 'overworked').play('overworked-idle');
@@ -291,25 +317,94 @@ export default class MemoryScene extends Phaser.Scene {
         this.holeDude = this.physics.add.sprite(125, 1120, 'oldMan');
         this.deadDude = this.physics.add.sprite(620, 830, 'deadDude');
         this.why = this.physics.add.sprite(620, 790, 'why').play('why-idle');
-        // this.overworkedCloud = this.physics.add.sprite(100, 100, 'cloud');
-        // this.cloud = this.physics.add.sprite(540, 10, 'smallCloud');
-        // this.suicidalCloud = this.physics.add.sprite(800, 100, 'cloud');
-        // this.mayorCloud = this.physics.add.sprite(1200, 150, 'cloud');
-        // this.mailCloud = this.physics.add.sprite(100, 600, 'cloud');
-        // this.gardenerCloud = this.physics.add.sprite(500, 500, 'cloud');
-        // this.cloud = this.physics.add.sprite(800, 500, 'cloud');
-        // this.lostLoveCloud = this.physics.add.sprite(1050, 680, 'cloud');
-        // this.holeCloud = this.physics.add.sprite(100, 940, 'cloud');
-        // this.cloud10 = this.physics.add.sprite(500, 990, 'cloud');
-        // this.bulliedCloud = this.physics.add.sprite(800, 940, 'cloud');
-        // this.prayingCloud = this.physics.add.sprite(1100, 1200, 'cloud');
         
+        
+        this.clouds = this.physics.add.group();
+
+        this.overworkedCloud = this.physics.add.sprite(100, 100, 'cloud');
+        this.cloud = this.physics.add.sprite(540, 10, 'smallCloud');
+        this.suicidalCloud = this.physics.add.sprite(800, 100, 'cloud');
+        this.mayorCloud = this.physics.add.sprite(1200, 150, 'cloud');
+        this.mailCloud = this.physics.add.sprite(100, 600, 'cloud');
+        this.gardenerCloud = this.physics.add.sprite(500, 500, 'cloud');
+        this.cloud = this.physics.add.sprite(800, 500, 'cloud');
+        this.lostLoveCloud = this.physics.add.sprite(1050, 680, 'cloud');
+        this.holeCloud = this.physics.add.sprite(100, 940, 'cloud');
+        this.cloud10 = this.physics.add.sprite(500, 990, 'cloud');
+        this.bulliedCloud = this.physics.add.sprite(800, 940, 'cloud');
+        this.prayingCloud = this.physics.add.sprite(1100, 1200, 'cloud');
+        
+        
+        this.emitter.on('clearCloud', () => {
+            if (this.counter < this.clouds.getChildren().length) {
+                this.clouds.getChildren()[this.counter].visible = false;
+                this.counter++;
+            }
+        }, this)
+
+        worldLayer.setCollisionByProperty({ collides: true });
+        this.physics.add.collider(this.playerRight, worldLayer);
+
+
+        this.emitterRight.startFollow(this.playerRight);
+
+
+        this.anims.create({
+            key: 'leftP',
+            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'turnP',
+            frames: [{ key: 'dude', frame: 4 }],
+            frameRate: 20
+        });
+
+        this.anims.create({
+            key: 'rightP',
+            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+            frameRate: 5,
+            repeat: -1
+        });
+        this.emitterRight.visible = false
     }
-    // update functions 
+
     update(time, delta) {
+
+        this.inControl = this.registry.get('playerControls')
+
+
         // Resize The Viewport for the Scene
         let { width, height } = this.sys.game.canvas;
         this.cameras.main.setViewport(width / 2, 0, width, height);
+
+        this.playerRight.setVelocity(0)
+
+        if (this.inControl) {
+            this.emitterRight.visible = true
+            if (this.keyA.isDown) {
+                this.playerRight.setVelocityX(-this.speed);
+                this.playerRight.anims.play('leftP', true);
+            }
+            else if (this.keyD.isDown) {
+                this.playerRight.setVelocityX(this.speed);
+                this.playerRight.anims.play('rightP', true);
+            }
+            else if (this.keyW.isDown) {
+                this.playerRight.setVelocityY(-this.speed);
+            }
+            else if (this.keyS.isDown) {
+                this.playerRight.setVelocityY(this.speed);
+            }
+            else {
+                this.playerRight.setVelocityX(0);
+                this.playerRight.anims.play('turnP');
+            }
+        }
+
+
 
         this.controls.update(delta);
 
