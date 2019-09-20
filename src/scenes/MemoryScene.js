@@ -26,11 +26,12 @@ export default class MemoryScene extends Phaser.Scene {
         this.playerRight;
         this.cursors;
         this.controls;
+        this.emitter;
 
     }
 
-    init() {
-
+    init(data) {
+        this.emitter = data
     }
     preload() {
         this.load.image("tiles", rightTileSet);
@@ -97,19 +98,25 @@ export default class MemoryScene extends Phaser.Scene {
         this.secondBullyDude = this.physics.add.sprite(850, 1065, 'bully2');
         this.mailDude = this.physics.add.sprite(90, 840, 'mailman');
         this.deadDude = this.physics.add.sprite(640, 850, 'oldMan');
-        // this.overworkedCloud = this.physics.add.sprite(100, 100, 'cloud');
-        // this.cloud = this.physics.add.sprite(540, 10, 'smallCloud');
-        // this.suicidalCloud = this.physics.add.sprite(800, 100, 'cloud');
-        // this.mayorCloud = this.physics.add.sprite(1200, 150, 'cloud');
-        // this.mailCloud = this.physics.add.sprite(100, 600, 'cloud');
-        // this.gardenerCloud = this.physics.add.sprite(500, 500, 'cloud');
-        // this.cloud = this.physics.add.sprite(800, 500, 'cloud');
-        // this.lostLoveCloud = this.physics.add.sprite(1050, 680, 'cloud');
-        // this.holeCloud = this.physics.add.sprite(100, 940, 'cloud');
-        // this.cloud10 = this.physics.add.sprite(500, 990, 'cloud');
-        // this.bulliedCloud = this.physics.add.sprite(800, 940, 'cloud');
-        // this.prayingCloud = this.physics.add.sprite(1100, 1200, 'cloud');
+        this.overworkedCloud = this.physics.add.sprite(100, 100, 'cloud');
+        this.cloud = this.physics.add.sprite(540, 10, 'smallCloud');
+        this.suicidalCloud = this.physics.add.sprite(800, 100, 'cloud');
+        this.mayorCloud = this.physics.add.sprite(1200, 150, 'cloud');
+        this.mailCloud = this.physics.add.sprite(100, 600, 'cloud');
+        this.gardenerCloud = this.physics.add.sprite(500, 500, 'cloud');
+        this.cloud = this.physics.add.sprite(800, 500, 'cloud');
+        this.lostLoveCloud = this.physics.add.sprite(1050, 680, 'cloud');
+        this.holeCloud = this.physics.add.sprite(100, 940, 'cloud');
+        this.cloud10 = this.physics.add.sprite(500, 990, 'cloud');
+        this.bulliedCloud = this.physics.add.sprite(800, 940, 'cloud');
+        this.prayingCloud = this.physics.add.sprite(1100, 1200, 'cloud');
 
+        this.emitter.on('fountain', () => {
+            this.lostLoveCloud.visible = false
+        }, this)
+        this.emitter.on('prayer', () => {
+            this.prayingCloud.visible = false
+        }, this)
 
     }
 

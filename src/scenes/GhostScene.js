@@ -16,6 +16,7 @@ export default class GhostScene extends Phaser.Scene {
             active: true
         });
         this.speed = 160;
+        this.emitter;
         this.ghost;
         this.keyW;
         this.keyA;
@@ -30,8 +31,8 @@ export default class GhostScene extends Phaser.Scene {
         this.inControll = true;
     }
 
-    init() {
-
+    init(data) {
+        this.emitter = data
     }
     preload() {
         this.load.image("tilesG", darkTileSet);
@@ -79,12 +80,13 @@ export default class GhostScene extends Phaser.Scene {
         const hole = map.findObject("Objects", obj => obj.name === "Hole");
         const mayor = map.findObject("Objects", obj => obj.name === "Crying Statue");
         const gardener = map.findObject("Objects", obj => obj.name === "Gardening");
+        const fountain = map.findObject("Objects", obj => obj.name === "Fountain");
 
         this.thoughts = this.physics.add.group();
         this.fakeThoughts = this.physics.add.group();
 
-       this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 20, y: 50, stepX: 250, stepY: 150 } })
-       this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 1000, y: 1000, stepX: -250, stepY: -150 } })
+        this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 20, y: 50, stepX: 250, stepY: 150 } })
+        this.fakeThoughts.createMultiple({ key: 'thought', quantity: 5, setXY: { x: 1000, y: 1000, stepX: -250, stepY: -150 } })
 
         this.mailMan = this.thoughts.create(waitingMail.x, waitingMail.y, 'thought')
         this.overworkedMan = this.thoughts.create(overworked.x, overworked.y, 'thought')
@@ -96,12 +98,23 @@ export default class GhostScene extends Phaser.Scene {
         this.holeMan = this.thoughts.create(hole.x, hole.y, 'thought');
         this.mayorMan = this.thoughts.create(mayor.x, mayor.y, 'thought');
         this.gardenerMan = this.thoughts.create(gardener.x, gardener.y, 'thought');
+        this.fountain = this.physics.add.sprite(fountain.x, fountain.y, 'ghost');
         this.ghost = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, 'ghost');
+
+        const sequence = ['fountain'];
+        //
+        this.physics.add.overlap(this.ghost, this.fountain, () => {
+            this.emitter.emit('fountain')
+        }, null, this)
+        this.physics.add.overlap(this.ghost, this.prayingMan, () => {
+            this.emitter.emit('prayer')
+        }, null, this)
+        // //
 
         this.ghost.setCollideWorldBounds()
 
         this.bulliedMan.name = "Please stop! What have I ever done to you!"
-        this.overworkedMan.name = "I am actively putting myself in hell everyday.\nfor what?"   
+        this.overworkedMan.name = "I am actively putting myself in hell everyday.\nfor what?"
         this.mailMan.name = 'Waiting.. waiting for you..'
         this.prayingMan.name = "Dear God,\nyou are my only solace";
         this.suicidalMan.name = "I can't take this anymore! Everyday is the same..\nIt's hopeless";
@@ -177,11 +190,11 @@ export default class GhostScene extends Phaser.Scene {
         boundsA.height += range;
         boundsA.x -= range / 2;
         boundsA.y -= range / 2;
-        if (children.map(child => {
+        return (children.map(child => {
             boundsB = child.getBounds()
 
             if (Phaser.Geom.Intersects.RectangleToRectangle(boundsA, boundsB)) return true
-        }).includes(true)) return true
+        }).includes(true))
 
     }
 
@@ -194,26 +207,26 @@ export default class GhostScene extends Phaser.Scene {
 
         this.ghost.setVelocity(0)
 
-        if (this.inControll){
-        if (this.keyA.isDown) {
-            this.ghost.setVelocityX(-this.speed);
-            this.ghost.anims.play('left', true);
+        if (this.inControll) {
+            if (this.keyA.isDown) {
+                this.ghost.setVelocityX(-this.speed);
+                this.ghost.anims.play('left', true);
+            }
+            else if (this.keyD.isDown) {
+                this.ghost.setVelocityX(this.speed);
+                this.ghost.anims.play('right', true);
+            }
+            else if (this.keyW.isDown) {
+                this.ghost.setVelocityY(-this.speed);
+            }
+            else if (this.keyS.isDown) {
+                this.ghost.setVelocityY(this.speed);
+            }
+            else {
+                this.ghost.setVelocityX(0);
+                this.ghost.anims.play('turn');
+            }
         }
-        else if (this.keyD.isDown) {
-            this.ghost.setVelocityX(this.speed);
-            this.ghost.anims.play('right', true);
-        }
-        else if (this.keyW.isDown) {
-            this.ghost.setVelocityY(-this.speed);
-        }
-        else if (this.keyS.isDown) {
-            this.ghost.setVelocityY(this.speed);
-        }
-        else {
-            this.ghost.setVelocityX(0);
-            this.ghost.anims.play('turn');
-        }
-    }
 
     }
 

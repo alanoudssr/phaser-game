@@ -18,9 +18,10 @@ export default class GameScene extends Phaser.Scene {
 
     // create functions
     create() {
+        const emitter = new Phaser.Events.EventEmitter();
         this.scene.launch(CST.SCENES.START);
-        this.scene.launch(CST.SCENES.MEMORY);
-        this.scene.launch(CST.SCENES.GHOST);
+        this.scene.launch(CST.SCENES.MEMORY, emitter);
+        this.scene.launch(CST.SCENES.GHOST, emitter);
 
     }
 
