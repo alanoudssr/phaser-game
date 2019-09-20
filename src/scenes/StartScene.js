@@ -6,9 +6,7 @@ export default class StartScene extends Phaser.Scene {
         super({
             key: CST.SCENES.START,
         });
-        this.text;
-        this.cameras;
-        this.timer = 10
+        this.timer = 13
     }
 
     init() { }
@@ -16,8 +14,7 @@ export default class StartScene extends Phaser.Scene {
     preload() { }
 
     create() {
-        // let { width, height } = this.sys.game.canvas;
-        // this.cameras.main.setViewport(width, 0, width, height);
+
         this.scene.stop(CST.SCENES.GAME);
         this.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 

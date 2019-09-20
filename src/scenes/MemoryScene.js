@@ -33,9 +33,6 @@ export default class MemoryScene extends Phaser.Scene {
         this.emitterRight;
         this.clouds;
         this.counter = 0;
-        this.timer = 10;
-        this.timeText;
-        this.gameOver;
     }
 
     init(data) {
